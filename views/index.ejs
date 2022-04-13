@@ -7,6 +7,20 @@
     <title>Document</title>
   </head>
   <body>
+    <div class="container">
+      <div id="message-container">
+        <div class="message">
+          <strong>Chat Bot:</strong>
+          <p>Welcome!</p>
+        </div>
+      </div>
+      <div id="message-form-container">
+        <form action="">
+          <input type="text" />
+          <button>Send</button>
+        </form>
+      </div>
+    </div>
     <script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
     <script src="main.js"></script>
   </body>
