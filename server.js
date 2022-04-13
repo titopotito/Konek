@@ -24,6 +24,16 @@ io.on("connection", (socket) => {
     console.log(`Socket ${socket.id} has connected...`);
 
     socket.on("send-message", (message) => {
-        socket.broadcast.emit("broadcast-message", message);
+        socket.to(message.room).emit("broadcast-message", message);
+    });
+
+    socket.on("join-room", (room) => {
+        console.log(`${socket.id} has joined room ${room}`);
+        socket.join(room);
+    });
+
+    socket.on("leave-room", (room) => {
+        socket.leave(room);
+        console.log(`${socket.id} has left room ${room}`);
     });
 });

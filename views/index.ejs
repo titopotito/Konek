@@ -7,22 +7,35 @@
         <title>Document</title>
     </head>
     <body>
-        <div class="container">
-            <div id="chatbox">
-                <div class="message-container">
-                    <strong>Chat Bot:</strong>
-                    <p>Welcome!</p>
+        <div class="main-container">
+            <nav class="sidepanel-container">
+                <strong
+                    >Current Room: <span id="current-room">None</span></strong
+                >
+                <ul>
+                    <li class="room">Adobo Room</li>
+                    <li class="room">Shawarma Room</li>
+                    <li class="room">Fried Egg Room</li>
+                    <li class="room">Samgyupsal Room</li>
+                </ul>
+            </nav>
+            <div class="chatbox-container">
+                <div id="chatbox">
+                    <!-- <div class="message-container">
+                        <strong>Chat Bot:</strong>
+                        <p>Welcome!</p>
+                    </div> -->
+                </div>
+                <div id="message-form-container">
+                    <form action="">
+                        <input type="text" />
+                        <button>Send</button>
+                    </form>
                 </div>
             </div>
-            <div id="message-form-container">
-                <form action="">
-                    <input type="text" />
-                    <button>Send</button>
-                </form>
-            </div>
+            <script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
+            <script src="utils.js"></script>
+            <script src="main.js"></script>
         </div>
-        <script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
-        <script src="utils.js"></script>
-        <script src="main.js"></script>
     </body>
 </html>
