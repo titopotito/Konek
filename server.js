@@ -12,14 +12,18 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
-  const hostURL = req.headers.host;
-  res.render("index", { hostURL });
+    const hostURL = req.headers.host;
+    res.render("index", { hostURL });
 });
 
 server.listen(3000, (req, res) => {
-  console.log("Server is listening at port 3000");
+    console.log("Server is listening at port 3000");
 });
 
 io.on("connection", (socket) => {
-  console.log(`Socket ${socket.id} has connected...`);
+    console.log(`Socket ${socket.id} has connected...`);
+
+    socket.on("send-message", (message) => {
+        socket.broadcast.emit("broadcast-message", message);
+    });
 });
