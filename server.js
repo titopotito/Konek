@@ -16,8 +16,8 @@ app.get("/", (req, res) => {
     res.render("index", { hostURL });
 });
 
-server.listen(3000, (req, res) => {
-    console.log("Server is listening at port 3000");
+server.listen(8000, (req, res) => {
+    console.log("Server is listening at port 8000");
 });
 
 io.on("connection", (socket) => {

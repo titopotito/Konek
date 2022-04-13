@@ -1,6 +1,6 @@
-const messageForm = document.querySelector("#message-form-container > form");
+const messageForm = document.querySelector("#message-form-container");
 const chatbox = document.querySelector("#chatbox");
-const roomListComponent = document.querySelectorAll(".room");
+const roomListComponent = document.querySelectorAll(".room-item");
 const currentRoomComponent = document.querySelector("#current-room");
 const socket = io();
 

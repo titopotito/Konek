@@ -4,38 +4,50 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="css/app.css" />
         <title>Document</title>
     </head>
     <body>
-        <div class="main-container">
-            <nav class="sidepanel-container">
-                <strong
-                    >Current Room: <span id="current-room">None</span></strong
-                >
+        <div id="main-container">
+            <nav id="menu-container">
+                <header><h1>KONEK</h1></header>
+                <strong>Chat Rooms</strong>
                 <ul>
-                    <li class="room">Adobo Room</li>
-                    <li class="room">Shawarma Room</li>
-                    <li class="room">Fried Egg Room</li>
-                    <li class="room">Samgyupsal Room</li>
+                    <li class="room-item"><span>#</span> Adobo Room</li>
+                    <li class="room-item"><span>#</span> Shawarma Room</li>
+                    <li class="room-item"><span>#</span> Fried Egg Room</li>
+                    <li class="room-item"><span>#</span> Samgyupsal Room</li>
                 </ul>
             </nav>
-            <div class="chatbox-container">
+            <div id="chatbox-container">
+                <strong id="current-room">None</strong>
                 <div id="chatbox">
                     <!-- <div class="message-container">
-                        <strong>Chat Bot:</strong>
-                        <p>Welcome!</p>
+                        <img
+                            src="images/default_user_image.jpg"
+                            alt="Avatar of user"
+                        />
+                        <div>
+                            <strong>Chat Bot:</strong>
+                            <p>Welcome!</p>
+                        </div>
                     </div> -->
                 </div>
-                <div id="message-form-container">
-                    <form action="">
-                        <input type="text" />
-                        <button>Send</button>
-                    </form>
-                </div>
+                <form id="message-form-container">
+                    <input type="text" />
+                    <button>Send</button>
+                </form>
             </div>
+            <div id="sidepanel-container"></div>
             <script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
-            <script src="utils.js"></script>
-            <script src="main.js"></script>
+            <script src="js/utils.js"></script>
+            <script src="js/main.js"></script>
         </div>
     </body>
 </html>
