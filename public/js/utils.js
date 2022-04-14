@@ -6,7 +6,7 @@ const createMessageComponent = function (message) {
     const messageComponent = document.createElement("p");
 
     imageComponent.src = "http://localhost:8000/images/default_user_image.jpg";
-    usernameComponent.innerText = `${message.username}:`;
+    usernameComponent.innerText = `@${message.username}:`;
     messageComponent.innerText = message.content;
     wrapper.appendChild(usernameComponent);
     wrapper.appendChild(messageComponent);

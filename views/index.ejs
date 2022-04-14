@@ -1,34 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap"
-            rel="stylesheet"
-        />
-        <link rel="stylesheet" href="css/app.css" />
-        <title>Document</title>
-    </head>
-    <body>
-        <div id="main-container">
-            <nav id="menu-container">
-                <header><h1>KONEK</h1></header>
-                <strong>Chat Rooms</strong>
-                <ul>
-                    <li class="room-item"><span>#</span> Adobo Room</li>
-                    <li class="room-item"><span>#</span> Shawarma Room</li>
-                    <li class="room-item"><span>#</span> Fried Egg Room</li>
-                    <li class="room-item"><span>#</span> Samgyupsal Room</li>
-                </ul>
-            </nav>
-            <div id="chatbox-container">
-                <strong id="current-room">None</strong>
-                <div id="chatbox">
-                    <!-- <div class="message-container">
+<%- include('partials/header') %>
+
+<div id="main-container">
+    <nav id="menu-container">
+        <header><h1>KONEK</h1></header>
+        <div class="user-container">
+            <img src="images/default_user_image.jpg" alt="Avatar of user" />
+            <div>
+                <span>@</span><strong class="username"><%= username %> </strong>
+            </div>
+        </div>
+        <strong>Chat Rooms</strong>
+        <ul>
+            <li class="room-item"><span>#</span> Adobo Room</li>
+            <li class="room-item"><span>#</span> Shawarma Room</li>
+            <li class="room-item"><span>#</span> Fried Egg Room</li>
+            <li class="room-item"><span>#</span> Samgyupsal Room</li>
+        </ul>
+    </nav>
+    <div id="chatbox-container">
+        <strong id="current-room">None</strong>
+        <div id="chatbox">
+            <!-- <div class="message-container">
                         <img
                             src="images/default_user_image.jpg"
                             alt="Avatar of user"
@@ -38,16 +30,16 @@
                             <p>Welcome!</p>
                         </div>
                     </div> -->
-                </div>
-                <form id="message-form-container">
-                    <input type="text" />
-                    <button>Send</button>
-                </form>
-            </div>
-            <div id="sidepanel-container"></div>
-            <script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
-            <script src="js/utils.js"></script>
-            <script src="js/main.js"></script>
         </div>
-    </body>
-</html>
+        <form id="message-form-container">
+            <input type="text" />
+            <button>Send</button>
+        </form>
+    </div>
+    <div id="sidepanel-container"></div>
+</div>
+<script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/main.js"></script>
+
+<%- include('partials/footer.ejs') %>

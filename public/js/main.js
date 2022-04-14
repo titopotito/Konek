@@ -2,7 +2,9 @@ const messageForm = document.querySelector("#message-form-container");
 const chatbox = document.querySelector("#chatbox");
 const roomListComponent = document.querySelectorAll(".room-item");
 const currentRoomComponent = document.querySelector("#current-room");
+const usernameComponent = document.querySelector(".user-container .username");
 const socket = io();
+const username = usernameComponent.innerText;
 
 let currentRoom = currentRoomComponent.innerText;
 
@@ -11,7 +13,7 @@ messageForm.addEventListener("submit", (e) => {
     const content = messageForm.firstElementChild.value;
     const message = {
         content: content,
-        username: "James",
+        username: username,
         room: currentRoom,
     };
     socket.emit("send-message", message);
