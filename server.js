@@ -2,10 +2,20 @@ const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
+const mongoose = require("mongoose");
+const User = require("./models/user");
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
+
+main().catch((err) => console.log(err));
+
+async function main() {
+    await mongoose.connect("mongodb://localhost:27017/konekApp");
+    console.log("Connection with Mongo Database established...");
+}
+
 let username = "";
 
 app.set("view engine", "ejs");
