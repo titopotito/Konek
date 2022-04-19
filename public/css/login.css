@@ -1,0 +1,61 @@
+#container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#container > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#container > div > :first-child {
+    text-shadow: 2.5px 2.5px 5px black;
+    font-size: 1.75rem;
+    margin-top: 3em;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    background-color: #393e46;
+    padding: 2em;
+    margin-top: 1em;
+    border-radius: 5px;
+    box-shadow: 3px 3px 5px #111;
+}
+
+form input,
+form button {
+    min-width: 25ch;
+}
+
+.form-group:nth-child(1) {
+    margin-bottom: 2em;
+}
+
+.form-group:nth-child(2) {
+    margin-bottom: 0.5em;
+}
+
+.form-group > label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #d55a31;
+}
+
+small > a {
+    color: #eee;
+    font-size: 0.75rem;
+}
+
+small > a:hover {
+    text-decoration: underline;
+}
+
+.btn-default {
+    margin-top: 2em;
+    margin-bottom: 1em;
+}

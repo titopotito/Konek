@@ -1,0 +1,72 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat", sans-serif;
+    text-decoration: none;
+}
+
+html {
+    background-color: #222831;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+}
+
+.app-brand {
+    display: flex;
+    justify-content: center;
+}
+
+h1 {
+    color: #eee;
+}
+
+.app-brand > * {
+    text-shadow: 2.5px 2.5px 5px black;
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.app-brand > :first-child {
+    color: #d55a31;
+}
+
+.app-brand > :last-child {
+    color: #6d2bd9;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group > input {
+    padding: 0.5em;
+    margin-top: 0.4em;
+    font-size: 1.25rem;
+    font-weight: 600;
+    border-radius: 4px;
+    border: none;
+}
+
+.btn-default {
+    background-color: #6d2bd9;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5em;
+    color: #eee;
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.btn-default:hover {
+    cursor: pointer;
+    background-color: rgb(99, 33, 207);
+}
+
+.btn-default:active {
+    background-color: rgb(89, 23, 197);
+}
