@@ -1,10 +1,31 @@
+const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    username: String,
-    password: String,
-    email: String,
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
+        maxlength: 20,
+        minlength: 8,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+});
+
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, 12);
+    next();
 });
 
 const User = mongoose.model("User", userSchema);
@@ -13,7 +34,7 @@ const User = mongoose.model("User", userSchema);
 //     {
 //         username: "James",
 //         password: "taniniwonderhaplas",
-//         email: "email@yahoo.com",
+//         email: "james@yahoo.com",
 //     },
 //     {
 //         username: "Eli",
@@ -22,7 +43,7 @@ const User = mongoose.model("User", userSchema);
 //     },
 // ];
 
-// const deleteAll = async () => {
+// const seedDatabase = async () => {
 //     const userList = await User.find({});
 //     await User.deleteMany({ userList });
 //     for (let userData of seedUsers) {
@@ -33,6 +54,6 @@ const User = mongoose.model("User", userSchema);
 //     }
 // };
 
-// deleteAll();
+// seedDatabase();
 
 module.exports = User;

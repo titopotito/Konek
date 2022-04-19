@@ -36,7 +36,11 @@
             <button>Send</button>
         </form>
     </div>
-    <div id="sidepanel-container"></div>
+    <div id="sidepanel-container">
+        <form action="/logout" method="POST">
+            <button>Logout</button>
+        </form>
+    </div>
 </div>
 <script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
 <script src="/js/utils.js"></script>

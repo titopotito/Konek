@@ -1,8 +1,15 @@
 <%- include('partials/header') %>
+
 <div id="login-form-container">
-    <form action="/" method="POST">
+    <form action="/login" method="POST">
         <h1>KONEK</h1>
         <input type="text" placeholder="Username" name="username" required />
+        <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            required
+        />
         <button>Login</button>
     </form>
 </div>

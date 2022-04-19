@@ -1,13 +1,22 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-const path = require("path");
 const mongoose = require("mongoose");
 const User = require("./models/user");
+const session = require("express-session");
+const bcrypt = require("bcrypt");
+const path = require("path");
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/views"));
+
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded({ extended: true }));
+app.use(session({ secret: "test", resave: false, saveUninitialized: false }));
 
 main().catch((err) => console.log(err));
 
@@ -16,29 +25,42 @@ async function main() {
     console.log("Connection with Mongo Database established...");
 }
 
-let username = "";
+function isLoggedIn(req, res, next) {
+    if (req.session._id) return next();
+    res.redirect("login");
+}
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "/views"));
-
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.urlencoded({ extended: true }));
-
-app.get("/", (req, res) => {
-    if (username === "") {
-        res.redirect("login");
-    }
+app.get("/", isLoggedIn, async (req, res) => {
     const hostURL = req.headers.host;
-    res.render("index", { hostURL, username });
-});
-
-app.post("/", (req, res) => {
-    username = req.body.username;
-    res.redirect("/");
+    const user = await User.findById(req.session._id);
+    console.log(user);
+    res.render("index", { hostURL, username: user.username });
 });
 
 app.get("/login", (req, res) => {
+    if (req.session._id) return res.redirect("/");
     res.render("login");
+});
+
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+    const foundUser = await User.findOne({ username });
+    if (foundUser) {
+        const isCorrectPassword = await bcrypt.compare(
+            password,
+            foundUser.password
+        );
+        if (isCorrectPassword) {
+            req.session._id = foundUser._id;
+            return res.redirect("/");
+        }
+    }
+    res.redirect("/login");
+});
+
+app.post("/logout", (req, res) => {
+    req.session._id = null;
+    res.redirect("login");
 });
 
 server.listen(8000, (req, res) => {
