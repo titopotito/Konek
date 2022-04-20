@@ -4,6 +4,7 @@
     padding: 0;
     font-family: "Montserrat", sans-serif;
     text-decoration: none;
+    list-style: none;
 }
 
 html {
@@ -15,19 +16,22 @@ body {
     height: 100vh;
 }
 
+h1 {
+    color: #eee;
+}
+
+/* WATCH APP LOGO */
+
 .app-brand {
     display: flex;
     justify-content: center;
-}
-
-h1 {
-    color: #eee;
 }
 
 .app-brand > * {
     text-shadow: 2.5px 2.5px 5px black;
     font-size: 2rem;
     font-weight: 900;
+    line-height: 3rem;
 }
 
 .app-brand > :first-child {
@@ -37,6 +41,8 @@ h1 {
 .app-brand > :last-child {
     color: #6d2bd9;
 }
+
+/* FORM GROUP */
 
 .form-group {
     display: flex;
@@ -51,6 +57,8 @@ h1 {
     border-radius: 4px;
     border: none;
 }
+
+/* DEFAULT BUTTONS */
 
 .btn-default {
     background-color: #6d2bd9;
@@ -69,4 +77,52 @@ h1 {
 
 .btn-default:active {
     background-color: rgb(89, 23, 197);
+}
+
+/* NAVBAR */
+
+#navbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background-color: #393e46;
+    padding: 0.25rem 1rem;
+    box-shadow: 2px 2px 4px black;
+}
+
+#navbar > ul {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-right: 8em;
+}
+
+#navbar > ul > li {
+    margin: 0 1.5em;
+}
+
+#navbar > ul > li > a {
+    color: #eee;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+#navbar > ul > li > a:hover {
+    color: #d55a31;
+}
+
+#navbar > div {
+    display: flex;
+    align-items: center;
+}
+
+/* PROFILE PICTURES */
+
+.profile-picture {
+    height: 2.5rem;
+    border-radius: 50%;
+}
+
+.profile-picture:hover {
+    cursor: pointer;
 }

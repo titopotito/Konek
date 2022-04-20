@@ -34,7 +34,7 @@ app.get("/", isLoggedIn, async (req, res) => {
     const hostURL = req.headers.host;
     const user = await User.findById(req.session._id);
     console.log(user);
-    res.render("index", { hostURL, username: user.username });
+    res.render("home", { hostURL, username: user.username });
 });
 
 app.get("/login", (req, res) => {

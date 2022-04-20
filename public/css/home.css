@@ -1,0 +1,60 @@
+header {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-top: 4em;
+    color: #eee;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+}
+
+section {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 2em;
+    gap: 2em;
+}
+
+section > form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    inline-size: min-content;
+}
+
+section > form > span {
+    color: #eee;
+    overflow-wrap: break-word;
+    text-align: center;
+}
+
+.main-options {
+    border: none;
+    border-radius: 5px;
+    background-color: #393e46;
+}
+
+.main-options:hover {
+    cursor: pointer;
+}
+
+.main-options > i {
+    font-size: 6rem;
+    color: #eee;
+}
+
+.main-options > i::before {
+    padding: 1.25rem;
+    display: inline-block;
+}
+
+form:nth-child(odd) > .main-options > i:hover {
+    color: #6d2bd9;
+}
+
+form:nth-child(even) > .main-options > i:hover {
+    color: #d55a31;
+}
