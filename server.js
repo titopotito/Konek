@@ -37,6 +37,10 @@ app.get("/", isLoggedIn, async (req, res) => {
     res.render("home", { hostURL, username: user.username });
 });
 
+app.get("/chat", (req, res) => {
+    res.render("chat");
+});
+
 app.get("/login", (req, res) => {
     if (req.session._id) return res.redirect("/");
     res.render("login");

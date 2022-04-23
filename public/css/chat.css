@@ -1,0 +1,228 @@
+html {
+    overflow-y: hidden;
+}
+
+main {
+    width: 100%;
+    max-height: 87.5%;
+    display: flex;
+}
+
+main > section {
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    color: #d55a31;
+}
+
+#chat-list-section {
+    width: 25%;
+    padding: 1em;
+}
+
+#chat-list-section > div:nth-child(1),
+#chat-list-section > div:nth-child(2) {
+    margin: 0.5em 0;
+}
+
+#chat-list-section .btn-default {
+    font-size: 0.75rem;
+}
+
+#chat-list-section > div:nth-child(1) {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#chat-list-section > div:nth-child(2) > input {
+    padding: 0.75em;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+}
+
+#chat-list {
+    overflow-y: scroll;
+    scrollbar-width: thin;
+}
+
+.chat-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.75em;
+}
+
+.chat-list-item:hover {
+    cursor: pointer;
+    background-color: #393e46;
+}
+
+.chat-list-item > div:nth-child(2) {
+    width: 100%;
+    overflow: hidden;
+}
+
+.chat-list-item > div:nth-child(2) > div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.chat-list-item > div:nth-child(2) > div > span {
+    color: #eee;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.chat-list-item > div:nth-child(2) > div > span > span {
+    color: #d55a31;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.chat-list-item > div:nth-child(2) > p {
+    color: #eee;
+    font-size: 0.75rem;
+    font-weight: 400;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#chat-section {
+    width: 60%;
+    flex-grow: 1;
+    box-shadow: 1px 4px 4px black;
+}
+
+#chat-section > div {
+    display: flex;
+}
+
+#chat-section > div:first-child {
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em;
+}
+
+#chat-section > div:first-child > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+#chat-section > div:first-child > div:first-child > div {
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-section > div:first-child > div:first-child > div > span {
+    color: #d55a31;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+#chat-section > div:first-child > div:first-child > div > small {
+    color: #eee;
+    font-size: 0.75rem;
+    font-weight: 400;
+}
+
+#chat-box {
+    height: 100%;
+    background-color: #393e46;
+    display: flex;
+    flex-direction: column;
+    padding: 0 1em 2em 2em;
+}
+
+#chat-box > div:last-child {
+    padding: 1em 0.5em;
+    margin-right: 1em;
+    border-top: 1px solid rgba(112, 124, 151, 0.15);
+}
+
+#chat-box > div:last-child > form {
+    display: flex;
+    justify-content: space-between;
+}
+
+#chat-box > div:last-child > form > input {
+    width: 100%;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    color: #eee;
+}
+
+#chat-options-section {
+    width: 15%;
+}
+
+#chat-box > div:first-child {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+}
+
+.chat-message-block {
+    width: 100%;
+    padding: 0.75em 1em 0.75em 0;
+    display: flex;
+}
+
+.chat-message-block > div {
+    display: flex;
+    gap: 0.75em;
+    max-width: 70%;
+}
+
+.chat-message-block > div > .time-ellapsed {
+    position: relative;
+    top: 105%;
+    right: 10em;
+}
+
+.chat-message-box {
+    max-width: 70%;
+    border-radius: 10px;
+    background-color: #222831;
+    padding: 1em;
+    color: #eee;
+    font-size: 0.8rem;
+    line-height: 1.1rem;
+}
+
+.chat-message-box + i {
+    color: #222831;
+    align-self: center;
+}
+
+.user-message-block {
+    width: 100%;
+    padding: 0.75em 1em 0.75em 0;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.user-message-block > div {
+    max-width: 70%;
+    gap: 1em;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.user-message-block > div > .chat-message-box {
+    background-color: #eee;
+    color: #222831;
+}
+
+.user-message-block > div > .time-ellapsed {
+    position: relative;
+    top: 105%;
+    left: 80%;
+}
