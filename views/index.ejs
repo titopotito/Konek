@@ -1,49 +1,68 @@
-<%- include('partials/header') %>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;600;700;900&display=swap"
+            rel="stylesheet"
+        />
 
-<div id="main-container">
-    <nav id="menu-container">
-        <header><h1>KONEK</h1></header>
-        <div class="user-container">
-            <img src="images/default_user_image.jpg" alt="Avatar of user" />
+        <link rel="stylesheet" href="css/all.css" />
+        <link rel="stylesheet" href="css/home.css" />
+        <title>Document</title>
+    </head>
+    <body>
+        <nav id="navbar">
+            <a class="app-brand" href="/"><span>Watch</span><span>App</span></a>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/chat">Chat</a></li>
+                <li><a href="">Watch</a></li>
+            </ul>
             <div>
-                <span>@</span><strong class="username"><%= username %> </strong>
+                <img
+                    src="images/default_user_image.jpg"
+                    alt="Profile Picture"
+                    class="profile-picture"
+                />
             </div>
-        </div>
-        <strong>Chat Rooms</strong>
-        <ul>
-            <li class="room-item"><span>#</span> Adobo Room</li>
-            <li class="room-item"><span>#</span> Shawarma Room</li>
-            <li class="room-item"><span>#</span> Fried Egg Room</li>
-            <li class="room-item"><span>#</span> Samgyupsal Room</li>
-        </ul>
-    </nav>
-    <div id="chatbox-container">
-        <strong id="current-room">None</strong>
-        <div id="chatbox">
-            <!-- <div class="message-container">
-                        <img
-                            src="images/default_user_image.jpg"
-                            alt="Avatar of user"
-                        />
-                        <div>
-                            <strong>Chat Bot:</strong>
-                            <p>Welcome!</p>
-                        </div>
-                    </div> -->
-        </div>
-        <form id="message-form-container">
-            <input type="text" />
-            <button>Send</button>
-        </form>
-    </div>
-    <div id="sidepanel-container">
-        <form action="/logout" method="POST">
-            <button>Logout</button>
-        </form>
-    </div>
-</div>
-<script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
-<script src="/js/utils.js"></script>
-<script src="/js/main.js"></script>
-
-<%- include('partials/footer.ejs') %>
+        </nav>
+        <header>WELCOME @<span>Potito</span></header>
+        <main>
+            <section>
+                <form action="">
+                    <button class="main-options">
+                        <i class="fa fa-film"></i>
+                    </button>
+                    <span>Host Movie Group</span>
+                </form>
+                <form action="">
+                    <button class="main-options">
+                        <i class="far fa-plus-square"></i>
+                    </button>
+                    <span>Join Movie Group</span>
+                </form>
+                <form action="">
+                    <button class="main-options">
+                        <i class="far fa-calendar-alt"></i>
+                    </button>
+                    <span>Schedule Movie Group</span>
+                </form>
+                <form action="">
+                    <button class="main-options">
+                        <i class="far fa-comment-dots"></i>
+                    </button>
+                    <span>Chat With Friends</span>
+                </form>
+            </section>
+        </main>
+        <script
+            src="https://kit.fontawesome.com/a076d05399.js"
+            crossorigin="anonymous"
+        ></script>
+    </body>
+</html>

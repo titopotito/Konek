@@ -146,12 +146,12 @@ h1 {
     border-top: 1px solid rgba(112, 124, 151, 0.15);
 }
 
-#chat-box > div:last-child > form {
+#chat-form {
     display: flex;
     justify-content: space-between;
 }
 
-#chat-box > div:last-child > form > input {
+#chat-form > input {
     width: 100%;
     border: none;
     background-color: rgba(0, 0, 0, 0);
@@ -165,6 +165,7 @@ h1 {
 #chat-box > div:first-child {
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
     overflow-y: scroll;
     scrollbar-width: thin;
 }
@@ -195,6 +196,10 @@ h1 {
     color: #eee;
     font-size: 0.8rem;
     line-height: 1.1rem;
+}
+
+.chat-message-box > p {
+    overflow-wrap: break-word;
 }
 
 .chat-message-box + i {

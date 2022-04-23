@@ -292,7 +292,7 @@
                             class="profile-picture"
                         />
                         <div>
-                            <span>Luy Robin</span>
+                            <span id="chat-receiver-username">Luy Robin</span>
                             <small>1 min ago</small>
                         </div>
                     </div>
@@ -419,7 +419,7 @@
                         </div>
                     </div>
                     <div>
-                        <form action="">
+                        <form action="" id="chat-form">
                             <input
                                 type="text"
                                 placeholder="Type a message here"
@@ -437,5 +437,9 @@
             src="https://kit.fontawesome.com/a076d05399.js"
             crossorigin="anonymous"
         ></script>
+        <script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
+        <script src="js/MessageComponent.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/chat.js"></script>
     </body>
 </html>

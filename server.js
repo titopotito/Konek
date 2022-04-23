@@ -6,6 +6,7 @@ const User = require("./models/user");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 const path = require("path");
+const { findById } = require("./models/user");
 
 const app = express();
 const server = createServer(app);
@@ -31,19 +32,25 @@ function isLoggedIn(req, res, next) {
 }
 
 app.get("/", isLoggedIn, async (req, res) => {
-    const hostURL = req.headers.host;
     const user = await User.findById(req.session._id);
-    console.log(user);
-    res.render("home", { hostURL, username: user.username });
+    res.render("index", { username: user.username });
 });
 
-app.get("/chat", (req, res) => {
-    res.render("chat");
+app.get("/chat", isLoggedIn, async (req, res) => {
+    const hostURL = req.headers.host;
+    const user = await User.findById(req.session._id);
+    res.render("chat", { hostURL, username: user.username });
 });
 
 app.get("/login", (req, res) => {
     if (req.session._id) return res.redirect("/");
     res.render("login");
+});
+
+app.get("/_get_username", async (req, res) => {
+    const user = await User.findById(req.session._id);
+    const { username } = user;
+    res.json({ username });
 });
 
 app.post("/login", async (req, res) => {
@@ -74,17 +81,17 @@ server.listen(8000, (req, res) => {
 io.on("connection", (socket) => {
     console.log(`Socket ${socket.id} has connected...`);
 
-    socket.on("send-message", (message) => {
-        socket.to(message.room).emit("broadcast-message", message);
+    socket.on("submit-message", (chatData) => {
+        socket.broadcast.emit("send-message", chatData);
     });
 
-    socket.on("join-room", (room) => {
-        console.log(`${socket.id} has joined room ${room}`);
-        socket.join(room);
-    });
+    // socket.on("join-room", (room) => {
+    //     console.log(`${socket.id} has joined room ${room}`);
+    //     socket.join(room);
+    // });
 
-    socket.on("leave-room", (room) => {
-        socket.leave(room);
-        console.log(`${socket.id} has left room ${room}`);
-    });
+    // socket.on("leave-room", (room) => {
+    //     socket.leave(room);
+    //     console.log(`${socket.id} has left room ${room}`);
+    // });
 });
