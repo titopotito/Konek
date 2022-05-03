@@ -30,30 +30,4 @@ userSchema.pre("save", async function (next) {
 
 const User = mongoose.model("User", userSchema);
 
-// const seedUsers = [
-//     {
-//         username: "James",
-//         password: "taniniwonderhaplas",
-//         email: "james@yahoo.com",
-//     },
-//     {
-//         username: "Eli",
-//         password: "ambot123",
-//         email: "eli@yahoo.com",
-//     },
-// ];
-
-// const seedDatabase = async () => {
-//     const userList = await User.find({});
-//     await User.deleteMany({ userList });
-//     for (let userData of seedUsers) {
-//         let newUser = new User(userData);
-//         newUser.save((error) => {
-//             if (error) console.log(error);
-//         });
-//     }
-// };
-
-// seedDatabase();
-
 module.exports = User;

@@ -6,7 +6,6 @@ const User = require("./models/user");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 const path = require("path");
-const { findById } = require("./models/user");
 
 const app = express();
 const server = createServer(app);
@@ -22,7 +21,7 @@ app.use(session({ secret: "test", resave: false, saveUninitialized: false }));
 main().catch((err) => console.log(err));
 
 async function main() {
-    await mongoose.connect("mongodb://localhost:27017/konekApp");
+    await mongoose.connect("mongodb://localhost:27017/watchApp");
     console.log("Connection with Mongo Database established...");
 }
 
@@ -47,7 +46,7 @@ app.get("/login", (req, res) => {
     res.render("login");
 });
 
-app.get("/_get_username", async (req, res) => {
+app.get("/_get_username", isLoggedIn, async (req, res) => {
     const user = await User.findById(req.session._id);
     const { username } = user;
     res.json({ username });
