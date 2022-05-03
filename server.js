@@ -2,10 +2,13 @@ const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
-const User = require("./models/user");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 const path = require("path");
+
+const User = require("./models/user");
+const Chat = require("./models/chat");
+const ChatMessage = require("./models/chatMessage");
 
 const app = express();
 const server = createServer(app);
@@ -38,7 +41,9 @@ app.get("/", isLoggedIn, async (req, res) => {
 app.get("/chat", isLoggedIn, async (req, res) => {
     const hostURL = req.headers.host;
     const user = await User.findById(req.session._id);
-    res.render("chat", { hostURL, username: user.username });
+    const chatList = await Chat.getChatList(user);
+    console.log(chatList);
+    res.render("chat", { hostURL, chatList });
 });
 
 app.get("/login", (req, res) => {

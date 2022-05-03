@@ -16,21 +16,7 @@
         <title>Document</title>
     </head>
     <body>
-        <nav id="navbar">
-            <a class="app-brand" href="/"><span>Watch</span><span>App</span></a>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="">Chat</a></li>
-                <li><a href="">Watch</a></li>
-            </ul>
-            <div>
-                <img
-                    src="images/default_user_image.jpg"
-                    alt="Profile Picture"
-                    class="profile-picture"
-                />
-            </div>
-        </nav>
+        <%- include('partials/navbar') %>
         <main>
             <section id="chat-list-section">
                 <div>
@@ -43,6 +29,7 @@
                     <input type="text" placeholder="Search" />
                 </div>
                 <div id="chat-list">
+                    <% for (let chat of chatList) { %>
                     <div class="chat-list-item">
                         <div>
                             <img
@@ -53,233 +40,18 @@
                         </div>
                         <div>
                             <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
+                                <span
+                                    ><%= chat.chatMates[0].username %>
+                                    <span>...writes</span></span
+                                >
+                                <small class="time-ellapsed"
+                                    ><%= chat.timeStamp %>
+                                </small>
                             </div>
-                            <p>Most of its text is made up from section</p>
+                            <p><%= chat.lastChatMessage %></p>
                         </div>
                     </div>
-
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-list-item">
-                        <div>
-                            <img
-                                src="images/default_user_image.jpg"
-                                alt="Profile Picture"
-                                class="profile-picture"
-                            />
-                        </div>
-                        <div>
-                            <div>
-                                <span>Luy Robin <span>...writes</span></span>
-                                <small class="time-ellapsed">1 min ago</small>
-                            </div>
-                            <p>
-                                Most of its text is made up from section
-                                ssssssssssssssssssssssssssssssssssssssss ssssss
-                                aaaaaaaaaaa
-                            </p>
-                        </div>
-                    </div>
+                    <% } %>
                 </div>
             </section>
             <!-- ##################################################################################################################################################################################################################################################################################################### -->
