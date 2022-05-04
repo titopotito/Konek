@@ -6,10 +6,10 @@ const socket = io();
 
 chatFormHtml.addEventListener("submit", (e) => {
     e.preventDefault();
-    const chatData = { userInput: chatInputHtml.value };
-    submitMessage(chatData);
+    const userInput = chatInputHtml.value;
+    submitMessage(userInput);
     const newMessageComponent = new MessageComponent(
-        chatData.userInput,
+        userInput,
         chatOutputBoxHtml
     );
     newMessageComponent.createAndDisplayMessageAs("sender");
@@ -18,7 +18,7 @@ chatFormHtml.addEventListener("submit", (e) => {
 
 socket.on("send-message", (chatData) => {
     const newMessageComponent = new MessageComponent(
-        chatData.userInput,
+        chatData.textContent,
         chatOutputBoxHtml
     );
     newMessageComponent.createAndDisplayMessageAs("receiver");

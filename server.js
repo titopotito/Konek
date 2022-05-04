@@ -3,7 +3,6 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const session = require("express-session");
-const bcrypt = require("bcrypt");
 const path = require("path");
 
 const User = require("./models/user");
@@ -86,7 +85,8 @@ server.listen(8000, (req, res) => {
 io.on("connection", (socket) => {
     console.log(`Socket ${socket.id} has connected...`);
 
-    socket.on("submit-message", (chatData) => {
+    socket.on("submit-message", async (chatData) => {
+        await ChatMessage.saveChatMessage(chatData);
         socket.broadcast.emit("send-message", chatData);
     });
 

@@ -98,11 +98,13 @@
                         <div class=<%= chatMessage.sender !== user.username ?
                                 'chat-message-block': 'user-message-block'%>>
                             <div>
-                                <img
+                                <% if (chatMessage.sender !== user.username) { %>
+                                <img 
                                     src="/images/default_user_image.jpg"
                                     alt="Profile Picture"
                                     class="profile-picture"
                                 />
+                                <% } %> 
                                 <div class="chat-message-box">
                                     <p><%= chatMessage.textContent %></p>
                                 </div>
