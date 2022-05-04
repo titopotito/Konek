@@ -17,7 +17,7 @@ const io = new Server(server);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: "test", resave: false, saveUninitialized: false }));
 
@@ -29,8 +29,7 @@ async function main() {
 }
 
 function isLoggedIn(req, res, next) {
-    if (req.session._id) return next();
-    res.redirect("login");
+    return req.session._id ? next() : res.redirect("/login");
 }
 
 app.get("/", isLoggedIn, async (req, res) => {
@@ -42,33 +41,29 @@ app.get("/chat", isLoggedIn, async (req, res) => {
     const hostURL = req.headers.host;
     const user = await User.findById(req.session._id);
     const chatList = await Chat.getChatList(user);
-    console.log(chatList);
-    res.render("chat", { hostURL, chatList });
+    const chat = null;
+    res.render("chat", { hostURL, chatList, chat, user });
+});
+
+app.get("/chat/:chatID", isLoggedIn, async (req, res) => {
+    const hostURL = req.headers.host;
+    const user = await User.findById(req.session._id);
+    const chatList = await Chat.getChatList(user);
+    const { chatID } = req.params;
+    const chat = await Chat.getChat(chatID);
+    res.render("chat", { hostURL, chatList, chat, user });
 });
 
 app.get("/login", (req, res) => {
-    if (req.session._id) return res.redirect("/");
-    res.render("login");
-});
-
-app.get("/_get_username", isLoggedIn, async (req, res) => {
-    const user = await User.findById(req.session._id);
-    const { username } = user;
-    res.json({ username });
+    return req.session._id ? res.redirect("/") : res.render("login");
 });
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
-    const foundUser = await User.findOne({ username });
-    if (foundUser) {
-        const isCorrectPassword = await bcrypt.compare(
-            password,
-            foundUser.password
-        );
-        if (isCorrectPassword) {
-            req.session._id = foundUser._id;
-            return res.redirect("/");
-        }
+    const userID = await User.isAuthenticated(username, password);
+    if (userID) {
+        req.session._id = userID;
+        return res.redirect("/");
     }
     res.redirect("/login");
 });
@@ -76,6 +71,12 @@ app.post("/login", async (req, res) => {
 app.post("/logout", (req, res) => {
     req.session._id = null;
     res.redirect("login");
+});
+
+app.get("/_get_username", isLoggedIn, async (req, res) => {
+    const user = await User.findById(req.session._id);
+    const { username } = user;
+    res.json({ username });
 });
 
 server.listen(8000, (req, res) => {
@@ -99,3 +100,10 @@ io.on("connection", (socket) => {
     //     console.log(`${socket.id} has left room ${room}`);
     // });
 });
+
+// TO DO FOR CHAT APPLICATION:
+// - USE OF CLIENT ASYNC CALL FOR RETREIVING CHAT
+// - GROUPING OF LOGIC
+// - SENDING AND SAVING
+// - FORMATTING AND DISPLAYING DATE TIME
+// - UI DESIGN/RESPONSIVENESS

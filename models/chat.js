@@ -16,6 +16,36 @@ const chatSchema = new Schema({
     ],
 });
 
+// ##################################################################################################################################################################### STATIC FUNCTIONS ######################################################################################## #######################################################################################################################################
+
+chatSchema.static("getChat", async function (chatID) {
+    const chat = await Chat.findById(chatID, {
+        chatMessages: { $slice: -10 },
+    })
+        .populate("users")
+        .populate("chatMessages")
+        .populate({ path: "chatMessages", populate: { path: "sender" } });
+
+    const filteredChatData = {
+        _id: chat._id,
+        users: chat.users.map((user) => {
+            return {
+                username: user.username,
+            };
+        }),
+        chatMessages: chat.chatMessages.map((chatMessage) => {
+            return {
+                _id: chatMessage._id,
+                sender: chatMessage.sender.username,
+                textContent: chatMessage.textContent,
+                timeStamp: chatMessage.timeStamp,
+            };
+        }),
+    };
+
+    return filteredChatData;
+});
+
 chatSchema.static("getChatList", async function (user) {
     const chatList = await Chat.find(
         {
@@ -28,20 +58,19 @@ chatSchema.static("getChatList", async function (user) {
         .populate("users")
         .populate("chatMessages");
 
-    const newChatList = chatList.map((chat) => {
+    const filteredChatListData = chatList.map((chat) => {
         return {
-            chatMates: extractChatMatesFromChat(chat, user),
+            _id: chat._id,
+            chatMates: chat.users.filter(
+                (otherUser) => otherUser.username !== user.username
+            ),
             lastChatMessage: chat.chatMessages[0].textContent,
             timeStamp: chat.chatMessages[0].timeStamp,
         };
     });
 
-    return newChatList;
+    return filteredChatListData;
 });
-
-const extractChatMatesFromChat = (chat, user) => {
-    return chat.users.filter((item) => item.username !== user.username);
-};
 
 const Chat = mongoose.model("Chat", chatSchema);
 

@@ -11,8 +11,8 @@
             rel="stylesheet"
         />
 
-        <link rel="stylesheet" href="css/all.css" />
-        <link rel="stylesheet" href="css/chat.css" />
+        <link rel="stylesheet" href="/css/all.css" />
+        <link rel="stylesheet" href="/css/chat.css" />
         <title>Document</title>
     </head>
     <body>
@@ -30,10 +30,10 @@
                 </div>
                 <div id="chat-list">
                     <% for (let chat of chatList) { %>
-                    <div class="chat-list-item">
+                    <a class="chat-list-item" href="/chat/<%= chat._id %>">
                         <div>
                             <img
-                                src="images/default_user_image.jpg"
+                                src="/images/default_user_image.jpg"
                                 alt="Profile Picture"
                                 class="profile-picture"
                             />
@@ -50,21 +50,36 @@
                             </div>
                             <p><%= chat.lastChatMessage %></p>
                         </div>
-                    </div>
+                    </a>
                     <% } %>
                 </div>
             </section>
             <!-- ##################################################################################################################################################################################################################################################################################################### -->
+            <% if (!chat) { %>
+            <section id="chat-section-initial">
+                <h1>Select a message</h1>
+                <p>
+                    Choose from your existing conversations or start a new one.
+                </p>
+                <button class="btn-default btn-color box-shadow">
+                    + New Message
+                </button>
+            </section>
+            <% } else { %>
             <section id="chat-section">
                 <div>
                     <div>
                         <img
-                            src="images/default_user_image.jpg"
+                            src="/images/default_user_image.jpg"
                             alt="Profile Picture"
                             class="profile-picture"
                         />
                         <div>
-                            <span id="chat-receiver-username">Luy Robin</span>
+                            <span id="chat-receiver-username"
+                                ><%= user.username !== chat.users[0].username ?
+                                chat.users[0].username:
+                                chat.users[1].username%></span
+                            >
                             <small>1 min ago</small>
                         </div>
                     </div>
@@ -79,116 +94,23 @@
                 </div>
                 <div id="chat-box">
                     <div>
-                        <div class="chat-message-block">
+                        <% for (let chatMessage of chat.chatMessages) { %>
+                        <div class=<%= chatMessage.sender !== user.username ?
+                                'chat-message-block': 'user-message-block'%>>
                             <div>
                                 <img
-                                    src="images/default_user_image.jpg"
+                                    src="/images/default_user_image.jpg"
                                     alt="Profile Picture"
                                     class="profile-picture"
                                 />
                                 <div class="chat-message-box">
-                                    <p>
-                                        Hello! Finally found the time to write
-                                        to you) I need your help in creating
-                                        interactive animations for my mobile
-                                        application.
-                                    </p>
+                                    <p><%= chatMessage.textContent %></p>
                                 </div>
                                 <i class="fas fa-ellipsis-h"></i>
                                 <span class="time-ellapsed">4 min ago</span>
                             </div>
                         </div>
-                        <div class="chat-message-block">
-                            <div>
-                                <img
-                                    src="images/default_user_image.jpg"
-                                    alt="Profile Picture"
-                                    class="profile-picture"
-                                />
-                                <div class="chat-message-box">
-                                    <p>Can i send you files?</p>
-                                </div>
-                                <i class="fas fa-ellipsis-h"></i>
-                                <span class="time-ellapsed">4 min ago</span>
-                            </div>
-                        </div>
-                        <div class="chat-message-block">
-                            <div>
-                                <img
-                                    src="images/default_user_image.jpg"
-                                    alt="Profile Picture"
-                                    class="profile-picture"
-                                />
-                                <div class="chat-message-box">
-                                    <p>Can i send you files?</p>
-                                </div>
-                                <i class="fas fa-ellipsis-h"></i>
-                                <span class="time-ellapsed">4 min ago</span>
-                            </div>
-                        </div>
-                        <div class="user-message-block">
-                            <div>
-                                <div class="chat-message-box">
-                                    <p>Can i send you files?</p>
-                                </div>
-                                <i class="fas fa-ellipsis-h"></i>
-                                <span class="time-ellapsed">4 min ago</span>
-                            </div>
-                        </div>
-                        <div class="user-message-block">
-                            <div>
-                                <div class="chat-message-box">
-                                    <p>Can i send you files?</p>
-                                </div>
-                                <i class="fas fa-ellipsis-h"></i>
-                                <span class="time-ellapsed">4 min ago</span>
-                            </div>
-                        </div>
-                        <div class="user-message-block">
-                            <div>
-                                <div class="chat-message-box">
-                                    <p>Can i send you files?</p>
-                                </div>
-                                <i class="fas fa-ellipsis-h"></i>
-                                <span class="time-ellapsed">4 min ago</span>
-                            </div>
-                        </div>
-                        <div class="user-message-block">
-                            <div>
-                                <div class="chat-message-box">
-                                    <p>Can i send you files?</p>
-                                </div>
-                                <i class="fas fa-ellipsis-h"></i>
-                                <span class="time-ellapsed">4 min ago</span>
-                            </div>
-                        </div>
-                        <div class="user-message-block">
-                            <div>
-                                <div class="chat-message-box">
-                                    <p>Can i send you files?</p>
-                                </div>
-                                <i class="fas fa-ellipsis-h"></i>
-                                <span class="time-ellapsed">4 min ago</span>
-                            </div>
-                        </div>
-                        <div class="user-message-block">
-                            <div>
-                                <div class="chat-message-box">
-                                    <p>Can i send you files?</p>
-                                </div>
-                                <i class="fas fa-ellipsis-h"></i>
-                                <span class="time-ellapsed">4 min ago</span>
-                            </div>
-                        </div>
-                        <div class="user-message-block">
-                            <div>
-                                <div class="chat-message-box">
-                                    <p>Can i send you files?</p>
-                                </div>
-                                <i class="fas fa-ellipsis-h"></i>
-                                <span class="time-ellapsed">4 min ago</span>
-                            </div>
-                        </div>
+                        <% } %>
                     </div>
                     <div>
                         <form action="" id="chat-form">
@@ -203,6 +125,8 @@
                     </div>
                 </div>
             </section>
+            <% } %>
+              <!-- ##################################################################################################################################################################################################################################################################################################### -->
             <section id="chat-options-section"></section>
         </main>
         <script
@@ -210,8 +134,8 @@
             crossorigin="anonymous"
         ></script>
         <script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
-        <script src="js/MessageComponent.js"></script>
-        <script src="js/utils.js"></script>
-        <script src="js/chat.js"></script>
+        <script src="/js/MessageComponent.js"></script>
+        <script src="/js/utils.js"></script>
+        <script src="/js/chat.js"></script>
     </body>
 </html>
