@@ -45,7 +45,7 @@
                                     <span>...writes</span></span
                                 >
                                 <small class="time-ellapsed"
-                                    ><%= chat.timeStamp %>
+                                    ><%= chat.timePassed %>
                                 </small>
                             </div>
                             <p><%= chat.lastChatMessage %></p>
@@ -80,7 +80,6 @@
                                 chat.users[0].username:
                                 chat.users[1].username%></span
                             >
-                            <small>1 min ago</small>
                         </div>
                     </div>
                     <div>
@@ -110,7 +109,7 @@
                                 </div>
                                 <i class="fas fa-ellipsis-h"></i>
                             </div>
-                            <span class="time-ellapsed">4 min ago</span>
+                            <span class="time-ellapsed"><%= chatMessage.timePassed  %> </span>
                         </div>
                         <% } %>
                     </div>

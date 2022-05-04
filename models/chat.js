@@ -1,3 +1,4 @@
+const { getTimePassed } = require("../public/js/time-utils");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -38,7 +39,7 @@ chatSchema.static("getChat", async function (chatID) {
                 _id: chatMessage._id,
                 sender: chatMessage.sender.username,
                 textContent: chatMessage.textContent,
-                timeStamp: chatMessage.timeStamp,
+                timePassed: getTimePassed(chatMessage.timeStamp),
             };
         }),
     };
@@ -65,7 +66,7 @@ chatSchema.static("getChatList", async function (user) {
                 (otherUser) => otherUser.username !== user.username
             ),
             lastChatMessage: chat.chatMessages[0].textContent,
-            timeStamp: chat.chatMessages[0].timeStamp,
+            timePassed: getTimePassed(chat.chatMessages[0].timeStamp),
         };
     });
 

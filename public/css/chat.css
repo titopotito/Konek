@@ -107,13 +107,13 @@ h1 {
 #chat-section > div:first-child {
     justify-content: space-between;
     align-items: center;
-    padding: 1em;
+    padding: 1em 2em;
 }
 
 #chat-section > div:first-child > div:first-child {
     display: flex;
     align-items: center;
-    gap: 1em;
+    gap: 0.8em;
 }
 
 #chat-section > div:first-child > div:first-child > div {
@@ -123,14 +123,8 @@ h1 {
 
 #chat-section > div:first-child > div:first-child > div > span {
     color: #d55a31;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     font-weight: 700;
-}
-
-#chat-section > div:first-child > div:first-child > div > small {
-    color: #eee;
-    font-size: 0.75rem;
-    font-weight: 400;
 }
 
 #chat-section-initial {
