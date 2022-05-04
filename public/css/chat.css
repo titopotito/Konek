@@ -4,7 +4,7 @@ html {
 
 main {
     width: 100%;
-    max-height: 87.5%;
+    height: 95vh;
     display: flex;
 }
 
@@ -93,9 +93,11 @@ h1 {
 }
 
 #chat-section {
+    height: 100%;
     width: 60%;
     flex-grow: 1;
     box-shadow: 1px 4px 4px black;
+    overflow-y: hidden;
 }
 
 #chat-section > div {
@@ -132,7 +134,6 @@ h1 {
 }
 
 #chat-section-initial {
-    height: 100vh;
     width: 60%;
     flex-grow: 1;
     flex-direction: column;
@@ -153,7 +154,18 @@ h1 {
     background-color: #393e46;
     display: flex;
     flex-direction: column;
-    padding: 0 1em 2em 2em;
+    padding: 0 1em 1em 2em;
+    overflow-y: hidden;
+}
+
+#chat-box > div:first-child {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    scrollbar-width: thin;
 }
 
 #chat-box > div:last-child {
@@ -178,18 +190,11 @@ h1 {
     width: 15%;
 }
 
-#chat-box > div:first-child {
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    scrollbar-width: thin;
-}
-
 .chat-message-block {
     width: 100%;
     padding: 0.75em 1em 0.75em 0;
     display: flex;
+    flex-direction: column;
 }
 
 .chat-message-block > div {
@@ -198,10 +203,9 @@ h1 {
     max-width: 70%;
 }
 
-.chat-message-block > div > .time-ellapsed {
-    position: relative;
-    top: 105%;
-    right: 10em;
+.chat-message-block > .time-ellapsed {
+    margin-top: 0.5em;
+    margin-left: 6em;
 }
 
 .chat-message-box {
@@ -227,7 +231,8 @@ h1 {
     width: 100%;
     padding: 0.75em 1em 0.75em 0;
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 .user-message-block > div {
@@ -235,15 +240,14 @@ h1 {
     gap: 1em;
     display: flex;
     flex-direction: row-reverse;
+    overflow-x: hidden;
+}
+
+.user-message-block > .time-ellapsed {
+    margin-top: 0.5em;
 }
 
 .user-message-block > div > .chat-message-box {
     background-color: #eee;
     color: #222831;
-}
-
-.user-message-block > div > .time-ellapsed {
-    position: relative;
-    top: 105%;
-    left: 80%;
 }

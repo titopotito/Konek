@@ -32,8 +32,8 @@ function isLoggedIn(req, res, next) {
 }
 
 app.get("/", isLoggedIn, async (req, res) => {
-    const user = await User.findById(req.session._id);
-    res.render("index", { username: user.username });
+    const { username } = await User.findById(req.session._id);
+    res.render("index", { username });
 });
 
 app.get("/chat", isLoggedIn, async (req, res) => {
@@ -102,8 +102,6 @@ io.on("connection", (socket) => {
 });
 
 // TO DO FOR CHAT APPLICATION:
-// - USE OF CLIENT ASYNC CALL FOR RETREIVING CHAT
-// - GROUPING OF LOGIC
-// - SENDING AND SAVING
 // - FORMATTING AND DISPLAYING DATE TIME
+// - FIX BROADCASTING OF MESSAGE (SHOULD ONLY TO SPECIFIC USER)
 // - UI DESIGN/RESPONSIVENESS

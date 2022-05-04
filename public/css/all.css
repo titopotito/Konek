@@ -147,6 +147,8 @@ input:focus {
     background-color: #393e46;
     padding: 0.25rem 1rem;
     box-shadow: 2px 2px 4px black;
+    position: relative;
+    top: 0;
 }
 
 #navbar > ul {

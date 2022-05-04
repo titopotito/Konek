@@ -46,12 +46,12 @@ class MessageComponent {
 
             this.htmlComponent.subMessageBlock.append(
                 this.htmlComponent.messageBox,
-                this.htmlComponent.ellipsis,
-                this.htmlComponent.timeEllapsed
+                this.htmlComponent.ellipsis
             );
 
-            this.htmlComponent.messageBlock.appendChild(
-                this.htmlComponent.subMessageBlock
+            this.htmlComponent.messageBlock.append(
+                this.htmlComponent.subMessageBlock,
+                this.htmlComponent.timeEllapsed
             );
 
             return this.htmlComponent.messageBlock;

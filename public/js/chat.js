@@ -14,6 +14,7 @@ chatFormHtml.addEventListener("submit", (e) => {
     );
     newMessageComponent.createAndDisplayMessageAs("sender");
     chatInputHtml.value = "";
+    autoScrollDown(chatOutputBoxHtml);
 });
 
 socket.on("send-message", (chatData) => {
@@ -22,4 +23,7 @@ socket.on("send-message", (chatData) => {
         chatOutputBoxHtml
     );
     newMessageComponent.createAndDisplayMessageAs("receiver");
+    autoScrollDown(chatOutputBoxHtml);
 });
+
+autoScrollDown(chatOutputBoxHtml);

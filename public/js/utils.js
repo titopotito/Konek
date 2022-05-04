@@ -19,3 +19,7 @@ const submitMessage = async function (userInput) {
     };
     socket.emit("submit-message", chatData);
 };
+
+const autoScrollDown = function (htmlEl) {
+    htmlEl.scrollTop = htmlEl.scrollHeight;
+};

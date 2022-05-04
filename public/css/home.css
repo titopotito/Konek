@@ -39,6 +39,7 @@ section > form > span {
 
 .main-options:hover {
     cursor: pointer;
+    background-color: #393e46;
 }
 
 .main-options > i {
