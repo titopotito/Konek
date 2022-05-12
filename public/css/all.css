@@ -188,3 +188,107 @@ input:focus {
     cursor: pointer;
     opacity: 85%;
 }
+
+/* SEARCH */
+
+#search-user-form {
+    width: 100%;
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#search-user-form > label {
+    font-size: 1.2rem;
+    color: #d55a31;
+}
+
+#search-user-form > div:last-child {
+    position: relative;
+    width: 15rem;
+}
+
+#search-user-form > div > input {
+    width: 100%;
+    border: none;
+    background-color: #222831;
+    color: #eee;
+    font-size: 1rem;
+}
+
+#search-user-form > div > ul {
+    position: absolute;
+    top: 1.8em;
+    width: 100%;
+    background-color: #eee;
+    max-height: 15rem;
+    overflow-y: scroll;
+}
+
+#search-user-form > div > ul > li {
+    padding: 0.3em 0.5em;
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+}
+
+#search-user-form > div > ul > li:hover {
+    cursor: pointer;
+    background-color: #d55a31;
+}
+
+#search-user-form > div > ul > li:focus {
+    background-color: #d55a31;
+}
+
+#search-user-form > div > ul > li > img {
+    width: 2rem;
+    height: 2rem;
+}
+
+#search-user-form > div > ul > li > span {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* TAGS */
+
+.tags {
+    background-color: #6d2bd9;
+    border-radius: 0.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25em 0.25em;
+    gap: 0.2em;
+}
+
+.tags > span {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.tags > button {
+    border: none;
+    border-radius: 50px;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #6d2bd9;
+}
+
+.tags > button:hover {
+    background-color: rgb(99, 33, 207);
+}
+
+.tags > button:active {
+    background-color: rgb(89, 23, 197);
+}
+
+.tags > button > i {
+    font-size: 1.25rem;
+    display: inline-block;
+}

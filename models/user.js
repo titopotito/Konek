@@ -34,6 +34,15 @@ userSchema.static("isAuthenticated", async function (username, password) {
     return null;
 });
 
+userSchema.static("searchUser", async function (userInput) {
+    const re = new RegExp(userInput + ".*");
+    const users = await User.find(
+        { username: { $regex: re, $options: "i" } },
+        { _id: 0, username: 1 }
+    );
+    return users;
+});
+
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
     this.password = await bcrypt.hash(this.password, 12);

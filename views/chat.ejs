@@ -21,9 +21,9 @@
             <section id="chat-list-section">
                 <div>
                     <h1 class="text-shadow">Friends <span></span></h1>
-                    <button class="btn-default btn-color box-shadow">
+                    <a class="btn-default btn-color box-shadow" href="/chat/new">
                         +Create New Chat
-                    </button>
+                    </a>
                 </div>
                 <div>
                     <input type="text" placeholder="Search" />
@@ -55,15 +55,44 @@
                 </div>
             </section>
             <!-- ##################################################################################################################################################################################################################################################################################################### -->
-            <% if (!chat) { %>
+            <% if (urls.path === '/chat') { %>
             <section id="chat-section-initial">
                 <h1>Select a message</h1>
                 <p>
                     Choose from your existing conversations or start a new one.
                 </p>
-                <button class="btn-default btn-color box-shadow">
+                <a class="btn-default btn-color box-shadow" href="/chat/new">
                     + New Message
-                </button>
+                </a>
+            </section>
+            <% } else if (urls.path === '/chat/new') { %>
+            <section id="chat-section">
+                <div>
+                    <form id="search-user-form">
+                        <label for="search-user">To: </label>
+                        
+                        <div>
+                            <input type="text" name="search-user" autocomplete="off" autofocus="true">
+                            <ul>
+                            </ul>
+                        </div>
+                    </form>                    
+                </div>
+                <div id="chat-box">
+                    <div>
+                    </div>
+                    <div>
+                        <form action="" id="chat-form">
+                            <input
+                                type="text"
+                                placeholder="Type a message here"
+                            />
+                            <button class="btn-round btn-color">
+                                <i class="fas fa-location-arrow"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </section>
             <% } else { %>
             <section id="chat-section">
@@ -95,7 +124,7 @@
                     <div>
                         <% for (let chatMessage of chat.chatMessages) { %>
                         <div class=<%= chatMessage.sender !== user.username ?
-                                'chat-message-block': 'user-message-block'%>>
+                                'received-message-block': 'sent-message-block'%>>
                             <div>
                                 <% if (chatMessage.sender !== user.username) { %>
                                 <img 
@@ -134,8 +163,9 @@
             src="https://kit.fontawesome.com/a076d05399.js"
             crossorigin="anonymous"
         ></script>
-        <script src="http://<%= hostURL %>/socket.io/socket.io.js"></script>
-        <script src="/js/MessageComponent.js"></script>
+        <script src="http://<%= urls.host %>/socket.io/socket.io.js"></script>
+        <script src="/js/components.js"></script>
+        <script src="/js/ejs.min.js"></script>
         <script src="/js/utils.js"></script>
         <script src="/js/chat.js"></script>
     </body>

@@ -184,20 +184,20 @@ h1 {
     width: 15%;
 }
 
-.chat-message-block {
+.received-message-block {
     width: 100%;
     padding: 0.75em 1em 0.75em 0;
     display: flex;
     flex-direction: column;
 }
 
-.chat-message-block > div {
+.received-message-block > div {
     display: flex;
     gap: 0.75em;
     max-width: 70%;
 }
 
-.chat-message-block > .time-ellapsed {
+.received-message-block > .time-ellapsed {
     margin-top: 0.5em;
     margin-left: 6em;
 }
@@ -221,7 +221,7 @@ h1 {
     align-self: center;
 }
 
-.user-message-block {
+.sent-message-block {
     width: 100%;
     padding: 0.75em 1em 0.75em 0;
     display: flex;
@@ -229,19 +229,18 @@ h1 {
     align-items: flex-end;
 }
 
-.user-message-block > div {
+.sent-message-block > div {
     max-width: 70%;
     gap: 1em;
     display: flex;
     flex-direction: row-reverse;
-    overflow-x: hidden;
 }
 
-.user-message-block > .time-ellapsed {
+.sent-message-block > .time-ellapsed {
     margin-top: 0.5em;
 }
 
-.user-message-block > div > .chat-message-box {
+.sent-message-block > div > .chat-message-box {
     background-color: #eee;
     color: #222831;
 }

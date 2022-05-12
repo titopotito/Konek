@@ -1,23 +1,24 @@
-const express = require("express");
-const { createServer } = require("http");
-const { Server } = require("socket.io");
-const mongoose = require("mongoose");
-const session = require("express-session");
-const path = require("path");
+const express = require("express"),
+    { createServer } = require("http"),
+    { Server } = require("socket.io"),
+    mongoose = require("mongoose"),
+    session = require("express-session"),
+    path = require("path");
 
-const User = require("./models/user");
-const Chat = require("./models/chat");
-const ChatMessage = require("./models/chatMessage");
+const User = require("./models/user"),
+    Chat = require("./models/chat"),
+    ChatMessage = require("./models/chatMessage");
 
-const app = express();
-const server = createServer(app);
-const io = new Server(server);
+const app = express(),
+    server = createServer(app),
+    io = new Server(server);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(session({ secret: "test", resave: false, saveUninitialized: false }));
 
 main().catch((err) => console.log(err));
@@ -37,20 +38,59 @@ app.get("/", isLoggedIn, async (req, res) => {
 });
 
 app.get("/chat", isLoggedIn, async (req, res) => {
-    const hostURL = req.headers.host;
     const user = await User.findById(req.session._id);
     const chatList = await Chat.getChatList(user);
-    const chat = null;
-    res.render("chat", { hostURL, chatList, chat, user });
+    const urls = {
+        host: req.headers.host,
+        path: req.originalUrl,
+    };
+    res.render("chat", { urls, chatList, user });
+});
+
+app.get("/chat/new", isLoggedIn, async (req, res) => {
+    const user = await User.findById(req.session._id);
+    const chatList = await Chat.getChatList(user);
+    const urls = {
+        host: req.headers.host,
+        path: req.originalUrl,
+    };
+    res.render("chat", { urls, chatList, user });
+});
+
+app.post("/chat/new", isLoggedIn, async (req, res) => {
+    const { userInput, usernames } = req.body;
+    const user = await User.findById(req.session._id);
+    const users = await User.find({ username: { $in: usernames } });
+    users.push(user);
+
+    const chat = await Chat.findOne({
+        users: { $all: users, $size: users.length },
+    });
+
+    if (!chat) {
+        const newChat = new Chat({
+            users: users,
+            chatMessages: [],
+        });
+        const savedChat = await newChat.save();
+        const chatID = savedChat._id;
+        return res.json({ chatID, users });
+    }
+
+    const chatID = chat._id;
+    res.json({ chatID });
 });
 
 app.get("/chat/:chatID", isLoggedIn, async (req, res) => {
-    const hostURL = req.headers.host;
     const user = await User.findById(req.session._id);
     const chatList = await Chat.getChatList(user);
     const { chatID } = req.params;
     const chat = await Chat.getChat(chatID);
-    res.render("chat", { hostURL, chatList, chat, user });
+    const urls = {
+        host: req.headers.host,
+        path: req.originalUrl,
+    };
+    res.render("chat", { urls, chatList, chat, user });
 });
 
 app.get("/login", (req, res) => {
@@ -90,15 +130,19 @@ io.on("connection", (socket) => {
         socket.broadcast.emit("send-message", chatData);
     });
 
-    // socket.on("join-room", (room) => {
-    //     console.log(`${socket.id} has joined room ${room}`);
-    //     socket.join(room);
-    // });
+    socket.on("search-input", async (inputData) => {
+        const { userInput } = inputData;
+        const users = await User.searchUser(userInput);
+        socket.emit("display-search-result", { users });
+    });
 
-    // socket.on("leave-room", (room) => {
-    //     socket.leave(room);
-    //     console.log(`${socket.id} has left room ${room}`);
-    // });
+    socket.on("get-chat", async (data) => {
+        const { usernames } = data;
+        const user = await User.findOne({ username: usernames.slice(-1)[0] });
+        const users = await User.find({ username: { $in: usernames } });
+        const chat = await Chat.getChatByUsers(users);
+        socket.emit("display-chat", { user, chat });
+    });
 });
 
 // TO DO FOR CHAT APPLICATION:
