@@ -24,7 +24,7 @@ if (chatFormHtml) {
         e.preventDefault();
         const userInput = chatInputHtml.value;
         if (isNewChat() && hasSelectedUsers()) {
-            const { chatID, usernames } = await getOrCreateNewChat(userInput);
+            const { chatID, usernames } = await getOrCreateNewChat();
             displayChatHeader(usernames);
             window.history.replaceState(null, null, `/chat/${chatID}`);
         } else if (isNewChat()) {
@@ -43,7 +43,7 @@ if (chatFormHtml) {
 
 if (chatInputHtml) {
     const chatID = getChatID();
-    if (chatID) {
+    if (chatID !== "new") {
         chatInputHtml.addEventListener("focus", async (e) => {
             const username = await getUsername();
             socket.emit("update-is-seen-by", { chatID, username });

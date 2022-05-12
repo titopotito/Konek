@@ -19,7 +19,7 @@ const getChat = async function () {
     socket.emit("get-chat", { usernames });
 };
 
-const getOrCreateNewChat = async function (userInput) {
+const getOrCreateNewChat = async function () {
     const usernames = [];
     const tagsHtml = document.querySelectorAll(".tags");
     tagsHtml.forEach((tag) => usernames.push(tag.innerText));
@@ -27,10 +27,11 @@ const getOrCreateNewChat = async function (userInput) {
     const unparsedData = await fetch("/chat/new", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userInput, usernames }),
+        body: JSON.stringify({ usernames }),
     });
+
     const { chatID } = await unparsedData.json();
-    return { chatID, usernames, userInput };
+    return { chatID, usernames };
 };
 
 const sendMessage = async function (userInput) {
