@@ -58,7 +58,7 @@ app.get("/chat/new", isLoggedIn, async (req, res) => {
 });
 
 app.post("/chat/new", isLoggedIn, async (req, res) => {
-    const { userInput, usernames } = req.body;
+    const { usernames } = req.body;
     const user = await User.findById(req.session._id);
     const users = await User.find({ username: { $in: usernames } });
     users.push(user);
@@ -74,7 +74,7 @@ app.post("/chat/new", isLoggedIn, async (req, res) => {
         });
         const savedChat = await newChat.save();
         const chatID = savedChat._id;
-        return res.json({ chatID, users });
+        return res.json({ chatID });
     }
 
     const chatID = chat._id;
@@ -83,9 +83,9 @@ app.post("/chat/new", isLoggedIn, async (req, res) => {
 
 app.get("/chat/:chatID", isLoggedIn, async (req, res) => {
     const user = await User.findById(req.session._id);
-    const chatList = await Chat.getChatList(user);
     const { chatID } = req.params;
-    const chat = await Chat.getChat(chatID);
+    const chat = await Chat.getChat(chatID, user);
+    const chatList = await Chat.getChatList(user);
     const urls = {
         host: req.headers.host,
         path: req.originalUrl,
@@ -125,12 +125,23 @@ server.listen(8000, (req, res) => {
 io.on("connection", (socket) => {
     console.log(`Socket ${socket.id} has connected...`);
 
-    socket.on("submit-message", async (chatData) => {
-        await ChatMessage.saveChatMessage(chatData);
-        socket.broadcast.emit("send-message", chatData);
+    socket.on("assign-username-to-socket", (username) => {
+        socket.data.username = username;
     });
 
-    socket.on("search-input", async (inputData) => {
+    socket.on("send-message", async (chatData) => {
+        await ChatMessage.saveChatMessage(chatData);
+        const sockets = await io.fetchSockets();
+        const chatMateSocketIDs = await Chat.getChatMateSocketIDs(
+            chatData,
+            sockets
+        );
+        chatMateSocketIDs.forEach((socketID) =>
+            socket.to(socketID).emit("receive-message", chatData)
+        );
+    });
+
+    socket.on("search-users", async (inputData) => {
         const { userInput } = inputData;
         const users = await User.searchUser(userInput);
         socket.emit("display-search-result", { users });
@@ -142,6 +153,17 @@ io.on("connection", (socket) => {
         const users = await User.find({ username: { $in: usernames } });
         const chat = await Chat.getChatByUsers(users);
         socket.emit("display-chat", { user, chat });
+    });
+
+    socket.on("update-is-seen-by", async ({ chatID, username }) => {
+        const user = await User.findOne({ username });
+        const chat = await Chat.findById(chatID);
+        await Chat.updateIsSeenBy(chat, user);
+        socket.emit("update-chat-list-item", {
+            chatID,
+            textContent: chat.textContent,
+            isSender: true,
+        });
     });
 });
 

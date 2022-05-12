@@ -54,6 +54,18 @@ input:focus {
     font-weight: 600;
 }
 
+.active {
+    background-color: #393e46 !important;
+}
+
+.highlight-text {
+    color: #d55a31 !important;
+}
+
+.highlight-bg {
+    background-color: #393e46;
+}
+
 ::-webkit-scrollbar {
     width: 0.25rem;
 }

@@ -26,6 +26,7 @@ chatMessageSchema.static("saveChatMessage", async function (chatData) {
     const savedMessage = await newMessage.save();
     await Chat.findByIdAndUpdate(chatData.chatID, {
         $push: { chatMessages: savedMessage },
+        isSeenBy: [chatMessage.sender],
     });
 });
 

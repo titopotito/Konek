@@ -22,7 +22,7 @@
                 <div>
                     <h1 class="text-shadow">Friends <span></span></h1>
                     <a class="btn-default btn-color box-shadow" href="/chat/new">
-                        +Create New Chat
+                        +New Chat
                     </a>
                 </div>
                 <div>
@@ -30,7 +30,10 @@
                 </div>
                 <div id="chat-list">
                     <% for (let chat of chatList) { %>
-                    <a class="chat-list-item" href="/chat/<%= chat._id %>">
+                    <a class="chat-list-item
+                    <%= chat.isSeenBy.includes(user._id) ? '' : 'highlight-bg'%>
+                    <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>
+                    " href="/chat/<%= chat._id %>">
                         <div>
                             <img
                                 src="/images/default_user_image.jpg"
@@ -40,15 +43,14 @@
                         </div>
                         <div>
                             <div>
-                                <span
-                                    ><%= chat.chatMates[0].username %>
-                                    <span>...writes</span></span
+                                <span class="chat-list-username <%= chat.isSeenBy.includes(user._id) ? '' : 'highlight-text'%>"
+                                    ><%= chat.chatMates[0].username %></span
                                 >
-                                <small class="time-ellapsed"
+                                <small class="time-ellapsed <%= chat.isSeenBy.includes(user._id) ? '' : 'highlight-text'%>"
                                     ><%= chat.timePassed %>
                                 </small>
                             </div>
-                            <p><%= chat.lastChatMessage %></p>
+                            <p class="<%= chat.isSeenBy.includes(user._id) ? '' : 'highlight-text'%>"><%= chat.lastChatMessage %></p>
                         </div>
                     </a>
                     <% } %>

@@ -15,7 +15,7 @@ const chatHeaderHtml = document.querySelector("#chat-section > div"),
 if (searchUserInputHtml) {
     searchUserInputHtml.addEventListener("input", function (e) {
         const userInput = this.value;
-        socket.emit("search-input", { userInput });
+        socket.emit("search-users", { userInput });
     });
 }
 
@@ -23,27 +23,38 @@ if (chatFormHtml) {
     chatFormHtml.addEventListener("submit", async (e) => {
         e.preventDefault();
         const userInput = chatInputHtml.value;
-
-        if (window.location.pathname === "/chat/new") {
+        if (isNewChat() && hasSelectedUsers()) {
             const { chatID, usernames } = await getOrCreateNewChat(userInput);
-            const html = ejs.render(components.chatHeader, { usernames });
-            chatHeaderHtml.innerHTML = html;
+            displayChatHeader(usernames);
             window.history.replaceState(null, null, `/chat/${chatID}`);
+        } else if (isNewChat()) {
+            return;
         }
-
-        const html = ejs.render(components.messageBlock.sent, {
+        sendMessage(userInput);
+        displayMessage(userInput);
+        updateChatList({
+            chatID: getChatID(),
             textContent: userInput,
+            isSender: true,
         });
-        chatOutputBoxHtml.insertAdjacentHTML("beforeend", html);
-        chatInputHtml.value = "";
         autoScrollDown(chatOutputBoxHtml);
-        submitMessage(userInput);
     });
 }
 
-if (chatOutputBoxHtml) {
-    autoScrollDown(chatOutputBoxHtml);
+if (chatInputHtml) {
+    const chatID = getChatID();
+    if (chatID) {
+        chatInputHtml.addEventListener("focus", async (e) => {
+            const username = await getUsername();
+            socket.emit("update-is-seen-by", { chatID, username });
+        });
+    }
 }
+
+socket.on("connect", async () => {
+    const username = await getUsername();
+    socket.emit("assign-username-to-socket", username);
+});
 
 socket.on("display-search-result", async (data) => {
     const { users } = data;
@@ -65,24 +76,31 @@ socket.on("display-search-result", async (data) => {
     });
 });
 
+autoScrollDown(chatOutputBoxHtml);
+
 socket.on("display-chat", async (data) => {
     const { user, chat } = data;
     if (chat) {
-        const html = ejs.render(components.chatDisplay, { user, chat });
-        chatOutputBoxHtml.innerHTML = html;
+        displayChat(user, chat);
+        autoScrollDown(chatOutputBoxHtml);
     } else {
         chatOutputBoxHtml.innerHTML = "";
     }
+});
+
+socket.on("receive-message", (chatData) => {
+    const { textContent, chatID } = chatData;
+    if (chatID === getChatID()) {
+        displayMessage(textContent, (isSender = false));
+    }
+    updateChatList(chatData);
     autoScrollDown(chatOutputBoxHtml);
+});
+
+socket.on("update-chat-list-item", (chatData) => {
+    updateChatList(chatData);
 });
 
 // searchUserInputHtml.addEventListener("focusout", function (e) {
 //     searchUserOutputHtml.innerHTML = "";
 // });
-
-socket.on("send-message", (chatData) => {
-    const { textContent } = chatData;
-    const html = ejs.render(components.messageBlock.received, { textContent });
-    chatOutputBoxHtml.insertAdjacentHTML("beforeend", html);
-    autoScrollDown(chatOutputBoxHtml);
-});
