@@ -67,11 +67,11 @@ const components = {
             </button>
         </div>`,
 
-    chatDisplay: `<% for (let chatMessage of chat.chatMessages) { %>
-        <div class=<%= chatMessage.sender !== user.username ?
+    chatDisplay: `<% for (let message of chat.messages) { %>
+        <div class=<%= message.sender !== user.username ?
                 'received-message-block': 'sent-message-block'%>>
             <div>
-                <% if (chatMessage.sender !== user.username) { %>
+                <% if (message.sender !== user.username) { %>
                 <img 
                     src="/images/default_user_image.jpg"
                     alt="Profile Picture"
@@ -79,11 +79,33 @@ const components = {
                 />
                 <% } %> 
                 <div class="chat-message-box">
-                    <p><%= chatMessage.textContent %></p>
+                    <p><%= message.textContent %></p>
                 </div>
                 <i class="fas fa-ellipsis-h"></i>
             </div>
-            <span class="time-ellapsed"><%= chatMessage.timePassed  %> </span>
+            <span class="time-ellapsed"><%= message.timePassed  %> </span>
+        </div>
+        <% } %>`,
+    chatMessages: `<% for (let message of messages) { %>
+        <div class=<%= message.sender !== user.username ?
+                'received-message-block': 'sent-message-block'%>>
+            <% if (message.sender !== user.username) { %>
+            <span class="sender-username"><%= message.sender %> </span>
+            <% } %>
+            <div>
+                <% if (message.sender !== user.username) { %>
+                <img 
+                    src="/images/default_user_image.jpg"
+                    alt="Profile Picture"
+                    class="profile-picture"
+                />
+                <% } %> 
+                <div class="chat-message-box">
+                    <p><%= message.textContent %></p>
+                </div>
+                <i class="fas fa-ellipsis-h"></i>
+            </div>
+            <span class="time-ellapsed"><%= message.timePassed  %> </span>
         </div>
         <% } %>`,
 };

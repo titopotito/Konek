@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" href="#" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;600;700;900&display=swap"
+            rel="stylesheet"
+        />
+
+        <link rel="stylesheet" href="/css/all.css" />
+        <link rel="stylesheet" href="/css/room.css" />
+        <title>WatchApp</title>
+    </head>
+    <body>
+        <%- include('partials/navbar') %>
+
+        <main>
+            <video id="main-vid"></video>
+            <div id="chat-container">
+                <div>
+                    <span># Group-Chat-Name</span>
+                    <button class="btn-round">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+                <div id="chat-box">
+                    <div>
+                        <span class="username">Potito: </span>
+                        <span class="message">This is a Message</span>
+                    </div>
+                    <div>
+                        <span class="username">Eli: </span>
+                        <span class="message">This is a longer message</span>
+                    </div>
+                    <div>
+                        <span class="username">Awaw: </span>
+                        <span class="message"
+                            >This is the longest message of the three messages inside this messageg
+                            box of this app</span
+                        >
+                    </div>
+                </div>
+                <form action="" id="chat-form">
+                    <input type="text" placeholder="Type a message here" />
+                    <button class="btn-round btn-color">
+                        <i class="fas fa-location-arrow"></i>
+                    </button>
+                </form>
+            </div>
+        </main>
+        <section id="video-grid"></section>
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <script>
+            const ROOM_ID = "<%= roomID %>";
+            const PEER_ID = "<%= String(userID) %>";
+        </script>
+        <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/room.js"></script>
+    </body>
+</html>

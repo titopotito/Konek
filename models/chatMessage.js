@@ -17,16 +17,16 @@ const chatMessageSchema = new Schema({
 });
 
 chatMessageSchema.static("saveChatMessage", async function (chatData) {
-    const chatMessage = {
+    const message = {
         sender: await User.findOne({ username: chatData.sender }),
         textContent: chatData.textContent,
         timeStamp: chatData.timeStamp,
     };
-    const newMessage = new ChatMessage(chatMessage);
+    const newMessage = new ChatMessage(message);
     const savedMessage = await newMessage.save();
     await Chat.findByIdAndUpdate(chatData.chatID, {
-        $push: { chatMessages: savedMessage },
-        isSeenBy: [chatMessage.sender],
+        $push: { messages: savedMessage },
+        seenBy: [message.sender],
     });
 });
 

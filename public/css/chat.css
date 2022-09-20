@@ -201,6 +201,14 @@ h1 {
     max-width: 70%;
 }
 
+.received-message-block > .sender-username {
+    margin-left: 6em;
+    margin-bottom: 0.5em;
+    color: #d55a31;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
 .received-message-block > .time-ellapsed {
     margin-top: 0.5em;
     margin-left: 6em;

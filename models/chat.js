@@ -3,19 +3,19 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const chatSchema = new Schema({
-    users: [
+    members: [
         {
             type: Schema.Types.ObjectId,
             ref: "User",
         },
     ],
-    chatMessages: [
+    messages: [
         {
             type: Schema.Types.ObjectId,
             ref: "ChatMessage",
         },
     ],
-    isSeenBy: [
+    seenBy: [
         {
             type: Schema.Types.ObjectId,
             ref: "User",
@@ -23,100 +23,121 @@ const chatSchema = new Schema({
     ],
 });
 
-const filterChat = function (chat) {
-    if (chat) {
-        return {
-            _id: chat._id,
-            users: chat.users.map((user) => {
-                return {
-                    username: user.username,
-                };
-            }),
-            chatMessages: chat.chatMessages.map((chatMessage) => {
-                return {
-                    _id: chatMessage._id,
-                    sender: chatMessage.sender.username,
-                    textContent: chatMessage.textContent,
-                    timePassed: getTimePassed(chatMessage.timeStamp),
-                };
-            }),
-            isSeen: chat.isSeen,
-        };
-    }
-    return null;
+const filterChat = function (chat, username) {
+    return {
+        _id: chat._id,
+        members: extractChatMembers(chat),
+        chatMates: extractChatMates(chat, username),
+        messages: extractChatMessages(chat),
+    };
 };
 
-const filterChatList = function (chatList, user) {
+const filterChatList = function (chatList, username) {
     return chatList.map((chat) => {
         return {
             _id: chat._id,
-            chatMates: chat.users.filter(
-                (otherUser) => otherUser.username !== user.username
-            ),
-            lastChatMessage: chat.chatMessages[0].textContent,
-            timePassed: getTimePassed(chat.chatMessages[0].timeStamp),
-            isSeenBy: chat.isSeenBy,
+            chatMates: extractChatMates(chat, username),
+            lastChatMessage: chat.messages[0].textContent,
+            timePassed: getTimePassed(chat.messages[0].timeStamp),
+            seenBy: chat.seenBy.map((user) => user.username),
         };
     });
 };
 
-const getChatMembers = function (chat) {
-    return chat.users.map((user) => user.username);
+const extractChatMembers = function (chat) {
+    return chat.members.map((user) => user.username);
 };
 
-chatSchema.static("getChat", async function (chatID, user) {
-    const chat = await Chat.findById(chatID, {
-        chatMessages: { $slice: -10 },
-    })
-        .populate("users")
-        .populate("chatMessages")
-        .populate({ path: "chatMessages", populate: { path: "sender" } });
-    await Chat.updateIsSeenBy(chat, user);
-    const filteredChatData = filterChat(chat);
-    return filteredChatData;
+const extractChatMates = function (chat, username) {
+    return extractChatMembers(chat).filter((member) => member !== username);
+};
+
+const extractChatMessages = function (chat) {
+    return chat.messages.map((message) => {
+        return {
+            _id: message._id,
+            sender: message.sender.username,
+            textContent: message.textContent,
+            timePassed: getTimePassed(message.timeStamp),
+        };
+    });
+};
+
+const calcSliceParam = async function (chatID, index) {
+    const chatLength = await Chat.getChatLength(chatID);
+    return index + 10 <= chatLength ? [-10 - index, 10] : [-chatLength, chatLength - index];
+};
+
+chatSchema.static("getChatLength", async function (chatID) {
+    const ObjectId = mongoose.Types.ObjectId;
+    const foundChatArray = await Chat.aggregate([
+        { $match: { _id: ObjectId(chatID) } },
+        { $project: { chatLength: { $size: "$messages" } } },
+    ]);
+    const chatLength = foundChatArray[0].chatLength;
+    return chatLength;
 });
 
-chatSchema.static("getChatByUsers", async function (users) {
-    const chat = await Chat.findOne({
-        users: { $all: users, $size: users.length },
+chatSchema.static("getChat", async function (chatID, user) {
+    const foundChat = await Chat.findById(chatID, {
+        messages: { $slice: -10 },
     })
-        .populate("users")
-        .populate("chatMessages")
-        .populate({ path: "chatMessages", populate: { path: "sender" } });
+        .populate("members")
+        .populate("messages")
+        .populate({ path: "messages", populate: { path: "sender" } });
 
-    const filteredChatData = filterChat(chat);
-    return filteredChatData;
+    await Chat.updateSeenBy(foundChat, user);
+    const chat = filterChat(foundChat, user.username);
+    return chat;
+});
+
+chatSchema.static("getChatByMembers", async function (members, user) {
+    const foundChat = await Chat.findOne({
+        members: { $all: members, $size: members.length },
+    })
+        .populate("members")
+        .populate("messages")
+        .populate({ path: "messages", populate: { path: "sender" } });
+
+    if (foundChat) {
+        const chat = filterChat(foundChat, user.username);
+        return chat;
+    }
+    return null;
 });
 
 chatSchema.static("getChatList", async function (user) {
-    const chatList = await Chat.find(
-        {
-            users: { $in: [user._id] },
-        },
-        {
-            chatMessages: { $slice: -1 },
-        }
+    const foundChatList = await Chat.find(
+        { members: { $in: [user._id] } },
+        { messages: { $slice: -1 } }
     )
-        .populate("users")
-        .populate("chatMessages");
+        .populate("members")
+        .populate("messages")
+        .populate("seenBy");
 
-    const filteredChatListData = filterChatList(chatList, user);
-    return filteredChatListData;
+    const chatList = filterChatList(foundChatList, user.username);
+    return chatList;
 });
 
-chatSchema.static("getChatMembers", async function (chatID) {
-    const chat = await Chat.findById(chatID).populate("users");
-    const chatMembers = getChatMembers(chat);
-    return chatMembers;
+chatSchema.static("getChatMessages", async function (chatID, index = 0) {
+    const sliceParam = await calcSliceParam(chatID, index);
+    if (sliceParam[1] === 0) return null;
+
+    const chat = await Chat.findById(chatID, {
+        messages: { $slice: sliceParam },
+    })
+        .populate("messages")
+        .populate({ path: "messages", populate: { path: "sender" } });
+
+    const chatMessages = extractChatMessages(chat);
+    return chatMessages;
 });
 
-chatSchema.static("getChatMateSocketIDs", async function (chatData, sockets) {
-    const chatMembers = await Chat.getChatMembers(chatData.chatID);
-    const chatMates = chatMembers.filter(
-        (member) => member !== chatData.sender
-    );
-
+chatSchema.static("getChatMateSocketIDs", async function (chatID, sockets, username) {
+    const chat = await Chat.findById(chatID).populate("members");
+    const chatMates = extractChatMates(chat, username);
     const chatMateSocketIDs = [];
+
     for (let socket of sockets) {
         if (chatMates.includes(socket.data.username)) {
             chatMateSocketIDs.push(socket.id);
@@ -126,9 +147,11 @@ chatSchema.static("getChatMateSocketIDs", async function (chatData, sockets) {
     return chatMateSocketIDs;
 });
 
-chatSchema.static("updateIsSeenBy", async function (chat, user) {
-    chat.isSeenBy.push(user);
-    await chat.save();
+chatSchema.static("updateSeenBy", async function (chat, user) {
+    if (!chat.seenBy.includes(user._id)) {
+        chat.seenBy.push(user);
+        await chat.save();
+    }
 });
 
 const Chat = mongoose.model("Chat", chatSchema);

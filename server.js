@@ -3,15 +3,16 @@ const express = require("express"),
     { Server } = require("socket.io"),
     mongoose = require("mongoose"),
     session = require("express-session"),
-    path = require("path");
+    path = require("path"),
+    { v4: uuid } = require("uuid");
 
 const User = require("./models/user"),
     Chat = require("./models/chat"),
     ChatMessage = require("./models/chatMessage");
 
 const app = express(),
-    server = createServer(app),
-    io = new Server(server);
+    httpServer = createServer(app),
+    io = new Server(httpServer);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
@@ -21,6 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(session({ secret: "test", resave: false, saveUninitialized: false }));
 
+const { PeerServer } = require("peer"),
+    peerServer = PeerServer({
+        port: 9000,
+        path: "/r",
+    });
+
 main().catch((err) => console.log(err));
 
 async function main() {
@@ -29,16 +36,29 @@ async function main() {
 }
 
 function isLoggedIn(req, res, next) {
-    return req.session._id ? next() : res.redirect("/login");
+    return req.session._username ? next() : res.redirect("/login");
 }
 
 app.get("/", isLoggedIn, async (req, res) => {
-    const { username } = await User.findById(req.session._id);
-    res.render("index", { username });
+    const { _username } = req.session;
+    res.render("index", { username: _username });
+});
+
+app.get("/r", isLoggedIn, async (req, res) => {
+    res.redirect(`r/${uuid()}`);
+});
+
+app.get("/r/:id", isLoggedIn, async (req, res) => {
+    const urls = {
+        host: req.headers.host,
+        path: req.originalUrl,
+    };
+    res.render("room", { roomID: req.params.id, userID: req.session._id, urls });
 });
 
 app.get("/chat", isLoggedIn, async (req, res) => {
-    const user = await User.findById(req.session._id);
+    const { _username } = req.session;
+    const user = await User.findOne({ username: _username });
     const chatList = await Chat.getChatList(user);
     const urls = {
         host: req.headers.host,
@@ -48,7 +68,8 @@ app.get("/chat", isLoggedIn, async (req, res) => {
 });
 
 app.get("/chat/new", isLoggedIn, async (req, res) => {
-    const user = await User.findById(req.session._id);
+    const { _username } = req.session;
+    const user = await User.findOne({ username: _username });
     const chatList = await Chat.getChatList(user);
     const urls = {
         host: req.headers.host,
@@ -58,19 +79,20 @@ app.get("/chat/new", isLoggedIn, async (req, res) => {
 });
 
 app.post("/chat/new", isLoggedIn, async (req, res) => {
+    const { _username } = req.session;
     const { usernames } = req.body;
-    const user = await User.findById(req.session._id);
-    const users = await User.find({ username: { $in: usernames } });
-    users.push(user);
+    const user = await User.findOne({ username: _username });
+    const chatMembers = await User.find({ username: { $in: usernames } });
+    chatMembers.push(user);
 
     const chat = await Chat.findOne({
-        users: { $all: users, $size: users.length },
+        members: { $all: chatMembers, $size: chatMembers.length },
     });
 
     if (!chat) {
         const newChat = new Chat({
-            users: users,
-            chatMessages: [],
+            members: chatMembers,
+            messages: [],
         });
         const savedChat = await newChat.save();
         const chatID = savedChat._id;
@@ -82,8 +104,9 @@ app.post("/chat/new", isLoggedIn, async (req, res) => {
 });
 
 app.get("/chat/:chatID", isLoggedIn, async (req, res) => {
-    const user = await User.findById(req.session._id);
+    const { _username } = req.session;
     const { chatID } = req.params;
+    const user = await User.findOne({ username: _username });
     const chat = await Chat.getChat(chatID, user);
     const chatList = await Chat.getChatList(user);
     const urls = {
@@ -94,31 +117,31 @@ app.get("/chat/:chatID", isLoggedIn, async (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-    return req.session._id ? res.redirect("/") : res.render("login");
+    return req.session._username ? res.redirect("/") : res.render("login");
 });
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
-    const userID = await User.isAuthenticated(username, password);
-    if (userID) {
-        req.session._id = userID;
+    const authObject = await User.isAuthenticated(username, password);
+    if (authObject.id) {
+        req.session._username = authObject.username;
+        req.session._id = authObject.id;
         return res.redirect("/");
     }
     res.redirect("/login");
 });
 
 app.post("/logout", (req, res) => {
-    req.session._id = null;
+    req.session._username = null;
     res.redirect("login");
 });
 
-app.get("/_get_username", isLoggedIn, async (req, res) => {
-    const user = await User.findById(req.session._id);
-    const { username } = user;
-    res.json({ username });
+app.get("/_get-client-username", (req, res) => {
+    const { _username } = req.session;
+    res.json({ username: _username });
 });
 
-server.listen(8000, (req, res) => {
+httpServer.listen(8000, (req, res) => {
     console.log("Server is listening at port 8000");
 });
 
@@ -131,42 +154,51 @@ io.on("connection", (socket) => {
 
     socket.on("send-message", async (chatData) => {
         await ChatMessage.saveChatMessage(chatData);
+        const chatID = chatData.chatID;
+        const username = chatData.sender;
         const sockets = await io.fetchSockets();
-        const chatMateSocketIDs = await Chat.getChatMateSocketIDs(
-            chatData,
-            sockets
-        );
-        chatMateSocketIDs.forEach((socketID) =>
-            socket.to(socketID).emit("receive-message", chatData)
-        );
+        const socketIDs = await Chat.getChatMateSocketIDs(chatID, sockets, username);
+        socketIDs.forEach((socketID) => socket.to(socketID).emit("receive-message", chatData));
     });
 
-    socket.on("search-users", async (inputData) => {
-        const { userInput } = inputData;
+    socket.on("search-users", async ({ userInput }) => {
         const users = await User.searchUser(userInput);
         socket.emit("display-search-result", { users });
     });
 
-    socket.on("get-chat", async (data) => {
-        const { usernames } = data;
+    socket.on("get-chat", async ({ usernames }) => {
         const user = await User.findOne({ username: usernames.slice(-1)[0] });
-        const users = await User.find({ username: { $in: usernames } });
-        const chat = await Chat.getChatByUsers(users);
+        const chatMembers = await User.find({ username: { $in: usernames } });
+        const chat = await Chat.getChatByMembers(chatMembers, user);
         socket.emit("display-chat", { user, chat });
     });
 
-    socket.on("update-is-seen-by", async ({ chatID, username }) => {
+    socket.on("update-seen-by", async ({ chatID, username }) => {
         const user = await User.findOne({ username });
         const chat = await Chat.findById(chatID);
-        await Chat.updateIsSeenBy(chat, user);
+        await Chat.updateSeenBy(chat, user);
         socket.emit("update-chat-list-item", {
             chatID,
-            textContent: chat.textContent,
             isSender: true,
+        });
+    });
+
+    socket.on("get-chat-messages", async ({ chatID, username, index }) => {
+        const user = await User.findOne({ username });
+        const chatMessages = await Chat.getChatMessages(chatID, index);
+        socket.emit("load-chat-messages", { chatMessages, user });
+    });
+
+    socket.on("join-room", (roomID, userID) => {
+        socket.join(roomID);
+        socket.to(roomID).emit("user-connected", userID);
+
+        socket.on("disconnect", () => {
+            socket.to(roomID).emit("user-disconnected", userID);
         });
     });
 });
 
 // TO DO FOR CHAT APPLICATION:
-// - FIX BROADCASTING OF MESSAGE (SHOULD ONLY TO SPECIFIC USER)
 // - UI DESIGN/RESPONSIVENESS
+// - FIX CHAT SCROLL

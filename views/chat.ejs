@@ -16,6 +16,7 @@
         <title>Chat | WatchApp</title>
     </head>
     <body>
+        <div id="client-data" data-client-username="<%= user.username %>" data-client-id="<%= user._id %>" hidden></div>
         <%- include('partials/navbar') %>
         <main>
             <section id="chat-list-section">
@@ -30,10 +31,8 @@
                 </div>
                 <div id="chat-list">
                     <% for (let chat of chatList) { %>
-                    <a class="chat-list-item
-                    <%= chat.isSeenBy.includes(user._id) ? '' : 'highlight-bg'%>
-                    <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>
-                    " href="/chat/<%= chat._id %>">
+                    <a class="chat-list-item" 
+                    href="/chat/<%= chat._id %>">
                         <div>
                             <img
                                 src="/images/default_user_image.jpg"
@@ -42,21 +41,33 @@
                             />
                         </div>
                         <div>
+                        <% if (chat.seenBy.includes(user.username)) { %>
                             <div>
-                                <span class="chat-list-username <%= chat.isSeenBy.includes(user._id) ? '' : 'highlight-text'%>"
-                                    ><%= chat.chatMates[0].username %></span
-                                >
-                                <small class="time-ellapsed <%= chat.isSeenBy.includes(user._id) ? '' : 'highlight-text'%>"
-                                    ><%= chat.timePassed %>
+                                <span class="chat-list-username <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>">
+                                    <%= chat.chatMates.join(', ') %>
+                                </span>
+                                <small class="time-ellapsed <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>">
+                                    <%= chat.timePassed %>
                                 </small>
                             </div>
-                            <p class="<%= chat.isSeenBy.includes(user._id) ? '' : 'highlight-text'%>"><%= chat.lastChatMessage %></p>
+                            <p class="<%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>"><%= chat.lastChatMessage %></p>
+                        <% } else { %>
+                            <div>
+                                <span class="chat-list-username highlight-text <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>">
+                                    <%= chat.chatMates.join(', ') %>
+                                </span>
+                                <small class="time-ellapsed highlight-text <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>">
+                                    <%= chat.timePassed %>
+                                </small>
+                            </div>
+                            <p class="highlight-text <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>"><%= chat.lastChatMessage %></p>
+                        <% } %>
                         </div>
                     </a>
                     <% } %>
                 </div>
             </section>
-            <!-- ##################################################################################################################################################################################################################################################################################################### -->
+           
             <% if (urls.path === '/chat') { %>
             <section id="chat-section-initial">
                 <h1>Select a message</h1>
@@ -107,9 +118,7 @@
                         />
                         <div>
                             <span id="chat-receiver-username"
-                                ><%= user.username !== chat.users[0].username ?
-                                chat.users[0].username:
-                                chat.users[1].username%></span
+                                ><%= chat.chatMates.join(', ') %></span
                             >
                         </div>
                     </div>
@@ -124,11 +133,14 @@
                 </div>
                 <div id="chat-box">
                     <div>
-                        <% for (let chatMessage of chat.chatMessages) { %>
-                        <div class=<%= chatMessage.sender !== user.username ?
+                        <% for (let message of chat.messages) { %>
+                        <div class=<%= message.sender !== user.username ?
                                 'received-message-block': 'sent-message-block'%>>
+                            <% if (message.sender !== user.username) { %>
+                            <span class="sender-username"><%= message.sender %> </span>
+                            <% } %>
                             <div>
-                                <% if (chatMessage.sender !== user.username) { %>
+                                <% if (message.sender !== user.username) { %>
                                 <img 
                                     src="/images/default_user_image.jpg"
                                     alt="Profile Picture"
@@ -136,11 +148,11 @@
                                 />
                                 <% } %> 
                                 <div class="chat-message-box">
-                                    <p><%= chatMessage.textContent %></p>
+                                    <p><%= message.textContent %></p>
                                 </div>
                                 <i class="fas fa-ellipsis-h"></i>
                             </div>
-                            <span class="time-ellapsed"><%= chatMessage.timePassed  %> </span>
+                            <span class="time-ellapsed"><%= message.timePassed  %> </span>
                         </div>
                         <% } %>
                     </div>
@@ -158,14 +170,14 @@
                 </div>
             </section>
             <% } %>
-              <!-- ##################################################################################################################################################################################################################################################################################################### -->
+          
             <section id="chat-options-section"></section>
         </main>
         <script
             src="https://kit.fontawesome.com/a076d05399.js"
             crossorigin="anonymous"
         ></script>
-        <script src="http://<%= urls.host %>/socket.io/socket.io.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
         <script src="/js/components.js"></script>
         <script src="/js/ejs.min.js"></script>
         <script src="/js/utils.js"></script>

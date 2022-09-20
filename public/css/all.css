@@ -55,7 +55,7 @@ input:focus {
 }
 
 .active {
-    background-color: #393e46 !important;
+    color: #6d2bd9 !important;
 }
 
 .highlight-text {

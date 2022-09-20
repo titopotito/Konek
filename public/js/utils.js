@@ -1,13 +1,13 @@
 const getUsername = async function () {
-    const unparsedData = await fetch("/_get_username");
-    const parsedData = await unparsedData.json();
-    return parsedData.username;
+    const response = await fetch("/_get-client-username");
+    const { username } = await response.json();
+    return username;
 };
 
 const getChatID = function () {
     const path = window.location.pathname;
     const chatID = path.slice(6);
-    return chatID;
+    return chatID !== "" && chatID !== "new" ? chatID : null;
 };
 
 const getChat = async function () {
@@ -24,13 +24,13 @@ const getOrCreateNewChat = async function () {
     const tagsHtml = document.querySelectorAll(".tags");
     tagsHtml.forEach((tag) => usernames.push(tag.innerText));
 
-    const unparsedData = await fetch("/chat/new", {
+    const response = await fetch("/chat/new", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usernames }),
     });
 
-    const { chatID } = await unparsedData.json();
+    const { chatID } = await response.json();
     return { chatID, usernames };
 };
 
@@ -84,37 +84,25 @@ const insertTag = async function ({ username, targetHtml = window, position }) {
     clearSearchInput();
 };
 
-const updateChatList = function ({ chatID, textContent, isSender = false }) {
+const updateChatList = function ({ chatID, textContent = null, isSender = false }) {
     const usernamesHtml = document.querySelectorAll(".chat-list-username");
     const chatListItemsHtml = document.querySelectorAll(".chat-list-item");
     for (let i = 0; i < chatListItemsHtml.length; i++) {
-        if (
-            chatListItemsHtml[i].href === `http://localhost:8000/chat/${chatID}`
-        ) {
-            if (textContent) {
-                usernamesHtml[i].parentElement.nextElementSibling.innerText =
-                    textContent;
+        if (chatListItemsHtml[i].href === `http://localhost:8000/chat/${chatID}`) {
+            if (textContent !== null) {
+                usernamesHtml[i].parentElement.nextElementSibling.innerText = textContent;
                 usernamesHtml[i].nextElementSibling.innerText = "Just Now";
             }
             if (!isSender) {
-                chatListItemsHtml[i].classList.add("highlight-bg");
                 usernamesHtml[i].classList.add("highlight-text");
-                usernamesHtml[i].parentElement.nextElementSibling.classList.add(
-                    "highlight-text"
-                );
-                usernamesHtml[i].nextElementSibling.classList.add(
-                    "highlight-text"
-                );
+                usernamesHtml[i].parentElement.nextElementSibling.classList.add("highlight-text");
+                usernamesHtml[i].nextElementSibling.classList.add("highlight-text");
             } else {
                 usernamesHtml[i].classList.remove("highlight-text");
-                usernamesHtml[
-                    i
-                ].parentElement.nextElementSibling.classList.remove(
+                usernamesHtml[i].parentElement.nextElementSibling.classList.remove(
                     "highlight-text"
                 );
-                usernamesHtml[i].nextElementSibling.classList.remove(
-                    "highlight-text"
-                );
+                usernamesHtml[i].nextElementSibling.classList.remove("highlight-text");
             }
         }
     }

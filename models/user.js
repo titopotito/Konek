@@ -25,11 +25,8 @@ const userSchema = new Schema({
 userSchema.static("isAuthenticated", async function (username, password) {
     const foundUser = await User.findOne({ username });
     if (foundUser) {
-        const isCorrectPassword = await bcrypt.compare(
-            password,
-            foundUser.password
-        );
-        return isCorrectPassword ? foundUser._id : null;
+        const isCorrectPassword = await bcrypt.compare(password, foundUser.password);
+        return isCorrectPassword ? { username: foundUser.username, id: foundUser._id } : null;
     }
     return null;
 });
