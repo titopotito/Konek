@@ -1,1 +1,1 @@
-A simple chat application.
+Chat and video call application
