@@ -18,14 +18,14 @@ section {
     gap: 2em;
 }
 
-section > form {
+section > div {
     display: flex;
     flex-direction: column;
     gap: 0.5em;
     inline-size: min-content;
 }
 
-section > form > span {
+section > div > span {
     color: #eee;
     overflow-wrap: break-word;
     text-align: center;
@@ -52,10 +52,10 @@ section > form > span {
     display: inline-block;
 }
 
-form:nth-child(odd) > .main-options > i:hover {
+div:nth-child(odd) > .main-options > i:hover {
     color: #6d2bd9;
 }
 
-form:nth-child(even) > .main-options > i:hover {
+div:nth-child(even) > .main-options > i:hover {
     color: #d55a31;
 }

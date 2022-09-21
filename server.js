@@ -45,6 +45,7 @@ app.get("/", isLoggedIn, async (req, res) => {
 });
 
 app.get("/r", isLoggedIn, async (req, res) => {
+    req.session.isMovieHost = true;
     res.redirect(`r/${uuid()}`);
 });
 
@@ -53,7 +54,12 @@ app.get("/r/:id", isLoggedIn, async (req, res) => {
         host: req.headers.host,
         path: req.originalUrl,
     };
-    res.render("room", { roomID: req.params.id, userID: req.session._id, urls });
+    res.render("room", {
+        roomID: req.params.id,
+        userID: req.session._id,
+        urls,
+        isMovieHost: req.session.isMovieHost,
+    });
 });
 
 app.get("/chat", isLoggedIn, async (req, res) => {
@@ -123,7 +129,7 @@ app.get("/login", (req, res) => {
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
     const authObject = await User.isAuthenticated(username, password);
-    if (authObject.id) {
+    if (authObject) {
         req.session._username = authObject.username;
         req.session._id = authObject.id;
         return res.redirect("/");
@@ -196,6 +202,10 @@ io.on("connection", (socket) => {
         socket.on("disconnect", () => {
             socket.to(roomID).emit("user-disconnected", userID);
         });
+    });
+
+    socket.on("send-screen-video-stream", (userID) => {
+        socket.emit("send-screen-video-stream", userID);
     });
 });
 
