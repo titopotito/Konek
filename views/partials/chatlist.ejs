@@ -1,0 +1,48 @@
+<section id="chat-list-section">
+    <div>
+        <h1 class="text-shadow">Chat <span></span></h1>
+        <a class="btn-default btn-color box-shadow" href="/chat/new">
+            +New Chat
+        </a>
+    </div>
+    <div>
+        <input type="text" placeholder="Search" />
+    </div>
+    <div id="chat-list">
+        <% for (let chat of chatList) { %>
+        <a class="chat-list-item" 
+        href="/chat/<%= chat._id %>">
+            <div>
+                <img
+                    src="/images/default_user_image.jpg"
+                    alt="Profile Picture"
+                    class="profile-picture"
+                />
+            </div>
+            <div>
+            <% if (chat.seenBy.includes(user.username)) { %>
+                <div>
+                    <span class="chat-list-username <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>">
+                        <%= chat.chatMates.join(', ') %>
+                    </span>
+                    <small class="time-ellapsed <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>">
+                        <%= chat.timePassed %>
+                    </small>
+                </div>
+                <p class="<%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>"><%= chat.lastChatMessage %></p>
+            <% } else { %>
+                <div>
+                    <span class="chat-list-username highlight-text <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>">
+                        <%= chat.chatMates.join(', ') %>
+                    </span>
+                    <small class="time-ellapsed highlight-text <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>">
+                        <%= chat.timePassed %>
+                    </small>
+                </div>
+                <p class="highlight-text <%= urls.path === `/chat/${chat._id}` ? 'active' : ''%>"><%= chat.lastChatMessage %></p>
+            <% } %>
+            </div>
+        </a>
+        <% } %>
+    </div>
+</section>

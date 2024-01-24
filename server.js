@@ -4,11 +4,13 @@ const express = require("express"),
     mongoose = require("mongoose"),
     session = require("express-session"),
     path = require("path"),
-    { v4: uuid } = require("uuid");
+    { v4: uuid } = require("uuid"),
+    flash = require("connect-flash");
 
 const User = require("./models/user"),
     Chat = require("./models/chat"),
-    ChatMessage = require("./models/chatMessage");
+    ChatMessage = require("./models/chatMessage"),
+    FriendRequest = require("./models/friendRequest");
 
 const app = express(),
     httpServer = createServer(app),
@@ -21,6 +23,14 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(session({ secret: "test", resave: false, saveUninitialized: false }));
+app.use(flash());
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.warning = req.flash("warning");
+    res.locals.error = req.flash("error");
+    next();
+});
 
 const { PeerServer } = require("peer"),
     peerServer = PeerServer({
@@ -31,7 +41,7 @@ const { PeerServer } = require("peer"),
 main().catch((err) => console.log(err));
 
 async function main() {
-    await mongoose.connect("mongodb://localhost:27017/watchApp");
+    await mongoose.connect("mongodb://0.0.0.0:27017/watchApp");
     console.log("Connection with Mongo Database established...");
 }
 
@@ -41,7 +51,8 @@ function isLoggedIn(req, res, next) {
 
 app.get("/", isLoggedIn, async (req, res) => {
     const { _username } = req.session;
-    res.render("index", { username: _username });
+    res.redirect("/chat");
+    // res.render("index", { username: _username });
 });
 
 app.get("/r", isLoggedIn, async (req, res) => {
@@ -109,6 +120,38 @@ app.post("/chat/new", isLoggedIn, async (req, res) => {
     res.json({ chatID });
 });
 
+app.post("/chat/sendFriendRequest", isLoggedIn, async (req, res) => {
+    const { _username } = req.session;
+    const { requesteeUsername } = req.body;
+    const requestor = await User.findOne({ username: _username });
+    const requestee = await User.findOne({ username: requesteeUsername });
+
+    if (!requestee) {
+        req.flash("error", "User does not exist.");
+        return res.redirect("/chat");
+    }
+
+    const isFriends = requestor.friends.includes(requestee);
+    if (isFriends) {
+        req.flash("warning", "You are already friends with this user.");
+        return res.redirect("/chat");
+    }
+
+    const hasPendingFriendRequest = await FriendRequest.findOne({
+        requestor: requestor,
+        requestee: requestee,
+    });
+
+    if (hasPendingFriendRequest) {
+        req.flash("warning", "Already have pending friend request for this user.");
+        return res.redirect("/chat");
+    }
+
+    const savedFriendRequest = await FriendRequest.sendFriendRequest(requestor, requestee);
+    req.flash("success", "Friend request sent.");
+    return res.redirect("/chat");
+});
+
 app.get("/chat/:chatID", isLoggedIn, async (req, res) => {
     const { _username } = req.session;
     const { chatID } = req.params;
@@ -132,7 +175,7 @@ app.post("/login", async (req, res) => {
     if (authObject) {
         req.session._username = authObject.username;
         req.session._id = authObject.id;
-        return res.redirect("/");
+        return res.redirect("/chat");
     }
     res.redirect("/login");
 });

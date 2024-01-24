@@ -20,6 +20,12 @@ const userSchema = new Schema({
         required: true,
         unique: true,
     },
+    friends: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+        },
+    ],
 });
 
 userSchema.static("isAuthenticated", async function (username, password) {
