@@ -1,0 +1,34 @@
+<%- include('../partials/header', {user: user}) %> 
+<main> 
+    <%- include('../partials/sidebar', {chatList: chatList}) %> 
+    <section id="chat-section">
+        <div>
+            <form id="search-user-form">
+                <label for="search-user">To: </label>
+                
+                <div>
+                    <input type="text" name="search-user" autocomplete="off" autofocus="true">
+                    <ul>
+                    </ul>
+                </div>
+            </form>                    
+        </div>
+        <div id="chat-box">
+            <div>
+            </div>
+            <div>
+                <form action="POST" id="chat-form">
+                    <input
+                        type="text"
+                        placeholder="Type a message here"
+                    />
+                    <button class="btn-round btn-color">
+                        <i class="fas fa-location-arrow"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+<%- include('../partials/footer') %> 
+    

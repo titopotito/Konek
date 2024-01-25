@@ -1,0 +1,34 @@
+<%- include('../partials/header', {user: user}) %> 
+<main> 
+    <%- include('../partials/sidebar', {chatList: chatList}) %> 
+    <section>
+        <%- include('navigation') %>
+        <ul>
+            <% for (let request of friendRequests) { %>
+            <li>
+                <a>
+                    <div>
+                        <img
+                            src="/images/default_user_image.jpg"
+                            alt="Profile Picture"
+                            class="profile-picture"
+                        />
+                    </div>
+                    <div>                              
+                        <span class="chat-list-username">
+                            <%= request.requestor.username %>
+                        </span>
+                    </div>
+                    <form action="/friends/requests/add/<%= request._id %>" method="POST">
+                        <button type="submit">Accept</button>
+                    </form>
+                    <form action="/friends/requests/delete/<%= request._id %>" method="POST">
+                        <button type="submit">Delete</button>
+                    </form>
+                </a>
+            </li>
+            <% } %>
+        </ul>
+    </section>
+</main>
+<%- include('../partials/header', {user: user}) %> 

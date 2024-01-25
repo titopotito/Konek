@@ -49,7 +49,7 @@ function isLoggedIn(req, res, next) {
     return req.session._username ? next() : res.redirect("/login");
 }
 
-app.get("/", isLoggedIn, async (req, res) => {
+async function initData(req, res, next) {
     const { _username } = req.session;
     const user = await User.findOne({ username: _username });
     const chatList = await Chat.getChatList(user);
@@ -57,7 +57,13 @@ app.get("/", isLoggedIn, async (req, res) => {
         host: req.headers.host,
         path: req.originalUrl,
     };
-    res.render("index", { urls, chatList, user });
+
+    req.contextData = { urls, chatList, user };
+    return next();
+}
+
+app.get("/", isLoggedIn, initData, async (req, res) => {
+    res.render("index", { ...req.contextData });
 });
 
 app.get("/r", isLoggedIn, async (req, res) => {
@@ -78,53 +84,26 @@ app.get("/r/:id", isLoggedIn, async (req, res) => {
     });
 });
 
-app.get("/friends", isLoggedIn, async (req, res) => {
-    const { _username } = req.session;
-    const user = await User.findOne({ username: _username });
-    const chatList = await Chat.getChatList(user);
-    const urls = {
-        host: req.headers.host,
-        path: req.originalUrl,
-    };
-    res.render("index", { urls, chatList, user });
+app.get("/friends", isLoggedIn, initData, async (req, res) => {
+    res.render("friends/", { ...req.contextData });
 });
 
-app.get("/friends/requests", isLoggedIn, async (req, res) => {
-    const { _username } = req.session;
-    const user = await User.findOne({ username: _username });
-    const chatList = await Chat.getChatList(user);
-    const urls = {
-        host: req.headers.host,
-        path: req.originalUrl,
-    };
-    const friendRequests = await FriendRequest.find({ requestee: user }).populate("requestor");
-
-    res.render("index", { urls, chatList, user, friendRequests });
+app.get("/friends/requests", isLoggedIn, initData, async (req, res) => {
+    const friendRequests = await FriendRequest.find({ requestee: req.contextData.user }).populate(
+        "requestor"
+    );
+    res.render("friends/requests", { ...req.contextData, friendRequests });
 });
 
-app.get("/friends/sentRequests", isLoggedIn, async (req, res) => {
-    const { _username } = req.session;
-    const user = await User.findOne({ username: _username });
-    const chatList = await Chat.getChatList(user);
-    const urls = {
-        host: req.headers.host,
-        path: req.originalUrl,
-    };
-    const sentRequests = await FriendRequest.find({ requestor: user }).populate("requestee");
-    console.log(sentRequests);
-
-    res.render("index", { urls, chatList, user, sentRequests });
+app.get("/friends/sentRequests", isLoggedIn, initData, async (req, res) => {
+    const sentRequests = await FriendRequest.find({ requestor: req.contextData.user }).populate(
+        "requestee"
+    );
+    res.render("friends/sentrequests", { ...req.contextData, sentRequests });
 });
 
-app.get("/friends/requests/add", isLoggedIn, async (req, res) => {
-    const { _username } = req.session;
-    const user = await User.findOne({ username: _username });
-    const chatList = await Chat.getChatList(user);
-    const urls = {
-        host: req.headers.host,
-        path: req.originalUrl,
-    };
-    res.render("index", { urls, chatList, user });
+app.get("/friends/requests/add", isLoggedIn, initData, async (req, res) => {
+    res.render("friends/add", { ...req.contextData });
 });
 
 app.post("/friends/requests/add/:requestID", isLoggedIn, async (req, res) => {
@@ -184,15 +163,8 @@ app.post("/friends/sendFriendRequest", isLoggedIn, async (req, res) => {
     return res.redirect("/");
 });
 
-app.get("/chat/new", isLoggedIn, async (req, res) => {
-    const { _username } = req.session;
-    const user = await User.findOne({ username: _username });
-    const chatList = await Chat.getChatList(user);
-    const urls = {
-        host: req.headers.host,
-        path: req.originalUrl,
-    };
-    res.render("index", { urls, chatList, user });
+app.get("/chat/new", isLoggedIn, initData, async (req, res) => {
+    res.render("chat/new", { ...req.contextData });
 });
 
 app.post("/chat/new", isLoggedIn, async (req, res) => {
@@ -220,17 +192,10 @@ app.post("/chat/new", isLoggedIn, async (req, res) => {
     res.json({ chatID });
 });
 
-app.get("/chat/:chatID", isLoggedIn, async (req, res) => {
-    const { _username } = req.session;
+app.get("/chat/:chatID", isLoggedIn, initData, async (req, res) => {
     const { chatID } = req.params;
-    const user = await User.findOne({ username: _username });
-    const chat = await Chat.getChat(chatID, user);
-    const chatList = await Chat.getChatList(user);
-    const urls = {
-        host: req.headers.host,
-        path: req.originalUrl,
-    };
-    res.render("index", { urls, chatList, chat, user });
+    const chat = await Chat.getChat(chatID, req.contextData.user);
+    res.render("chat/chat", { ...req.contextData, chat });
 });
 
 app.get("/login", (req, res) => {

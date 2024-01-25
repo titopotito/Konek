@@ -1,16 +1,8 @@
-<%- include('partials/header', {user: user}) %> 
+<%- include('../partials/header', {user: user}) %> 
 <main> 
-    <%- include('partials/sidebar', {chatList: chatList}) %> 
-    <section id="chat-section-initial">
-        <h1>Create a message</h1>
-        <div class="form-group">
-            <p>
-                Choose from your existing conversations or start a new one.
-            </p>
-            <a class="btn-default btn-color box-shadow" href="/chat/new">
-                + New Message
-            </a>
-        </div>
+    <%- include('../partials/sidebar', {chatList: chatList}) %> 
+    <section>
+       <%- include('navigation') %>
         <h1>Add friend</h1>
         <form action="/friends/sendFriendRequest" method="POST">
             <p>You can add friends with their ChatApp usernames.</p>
@@ -25,6 +17,5 @@
         </div>
         </form>
     </section>
-    <section id="chat-options-section"></section>
 </main>
-<%- include('partials/footer') %> 
+<%- include('../partials/footer') %> 

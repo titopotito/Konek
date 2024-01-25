@@ -4,7 +4,7 @@ html {
 
 main {
     width: 100%;
-    height: 95vh;
+    height: 100vh;
     display: flex;
 }
 
@@ -137,7 +137,6 @@ h1 {
 }
 
 #chat-section-initial {
-    width: 60%;
     flex-grow: 1;
     flex-direction: column;
     justify-content: start;
@@ -190,9 +189,8 @@ h1 {
 }
 
 #chat-options-section {
-    width: 15%;
+    width: 25%;
 }
-
 .received-message-block {
     width: 100%;
     padding: 0.75em 1em 0.75em 0;
