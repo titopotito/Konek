@@ -11,42 +11,271 @@
             rel="stylesheet"
         />
 
-        <link rel="stylesheet" href="css/all.css" />
-        <link rel="stylesheet" href="css/home.css" />
-        <title>WatchApp</title>
+        <link rel="stylesheet" href="/css/all.css" />
+        <link rel="stylesheet" href="/css/chat.css" />
+        <title>Chat | WatchApp</title>
     </head>
     <body>
-        <%- include('partials/navbar') %>
-
-        <header>WELCOME @<span><%= username %> </span></header>
+        <div id="client-data" data-client-username="<%= user.username %>" data-client-id="<%= user._id %>" hidden></div>
+      
         <main>
-            <section>
-                <div>
-                    <button class="main-options" onclick="location.href='/r'">
-                        <i class="fa fa-film"></i>
-                    </button>
-                    <span>Host Movie Group</span>
+            
+            <%- include('partials/chatlist', {chatList: chatList}) %>
+            
+           
+            <% if (urls.path === '/') { %>
+            <section id="chat-section-initial">
+                <h1>Create a message</h1>
+                <div class="form-group">
+                    
+                    <p>
+                        Choose from your existing conversations or start a new one.
+                    </p>
+                    <a class="btn-default btn-color box-shadow" href="/chat/new">
+                        + New Message
+                    </a>
                 </div>
-                <div>
-                    <button class="main-options">
-                        <i class="far fa-plus-square"></i>
+                <h1>Add friend</h1>
+                
+                <form action="/friends/sendFriendRequest" method="POST">
+                    <p>You can add friends with their ChatApp usernames.</p>
+                    <div class="form-group">
+                    <input type="text" placeholder="Username" name="requesteeUsername"/>
+                    <button type="submit" class="btn-default btn-color box-shadow">
+                        + Add Friend
                     </button>
-                    <span>Join Movie Group</span>
+                    <p><%= success %></p>
+                    <p><%= warning %></p>
+                    <p><%= error %></p>
                 </div>
+                </form>
+                
+            </section>
+            <% } else if (urls.path === '/chat/new') { %>
+            <section id="chat-section">
                 <div>
-                    <button class="main-options">
-                        <i class="far fa-calendar-alt"></i>
-                    </button>
-                    <span>Schedule Movie Group</span>
+                    <form id="search-user-form">
+                        <label for="search-user">To: </label>
+                        
+                        <div>
+                            <input type="text" name="search-user" autocomplete="off" autofocus="true">
+                            <ul>
+                            </ul>
+                        </div>
+                    </form>                    
                 </div>
-                <div>
-                    <button class="main-options" onclick="location.href='/chat'">
-                        <i class="far fa-comment-dots"></i>
-                    </button>
-                    <span>Chat With Friends</span>
+                <div id="chat-box">
+                    <div>
+                    </div>
+                    <div>
+                        <form action="POST" id="chat-form">
+                            <input
+                                type="text"
+                                placeholder="Type a message here"
+                            />
+                            <button class="btn-round btn-color">
+                                <i class="fas fa-location-arrow"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </section>
+            <% } else if (urls.path === '/friends'){%>
+            <section>
+                <ul>
+                    <li><a href="/friends">All Friends</a></li>
+                    <li><a href="/friends/requests">Friend Requests</a></li>
+                    <li><a href="/friends/sentRequests">Sent Requests</a></li>
+                    <li><a href="/friends/requests/add">Add Friend</a></li>
+                </ul>
+                <ul>
+
+                    <% for (let friend of user.friends) { %>
+                    <li>
+                        <a>
+                            <div>
+                                <img
+                                    src="/images/default_user_image.jpg"
+                                    alt="Profile Picture"
+                                    class="profile-picture"
+                                />
+                            </div>
+                            <div>                              
+                                <span class="chat-list-username">
+                                    <%= friend.username %>
+                                </span>
+                            </div>
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
+            </section>
+            <% } else if (urls.path === '/friends/requests'){%>
+            <section>
+                <ul>
+                    <li><a href="/friends">All Friends</a></li>
+                    <li><a href="/friends/requests">Friend Requests</a></li>
+                    <li><a href="/friends/sentRequests">Sent Requests</a></li>
+                    <li><a href="/friends/requests/add">Add Friend</a></li>
+                </ul>
+                <ul>
+
+                    <% for (let request of friendRequests) { %>
+                    <li>
+                        <a>
+                            <div>
+                                <img
+                                    src="/images/default_user_image.jpg"
+                                    alt="Profile Picture"
+                                    class="profile-picture"
+                                />
+                            </div>
+                            <div>                              
+                                <span class="chat-list-username">
+                                    <%= request.requestor.username %>
+                                </span>
+                            </div>
+                            <form action="/friends/requests/add/<%= request._id %>" method="POST">
+                                <button type="submit">Accept</button>
+                            </form>
+                            <form action="/friends/requests/delete/<%= request._id %>" method="POST">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
+            </section>
+            <% } else if (urls.path === '/friends/sentRequests'){%>
+            <section>
+                <ul>
+                    <li><a href="/friends">All Friends</a></li>
+                    <li><a href="/friends/requests">Friend Requests</a></li>
+                    <li><a href="/friends/sentRequests">Sent Requests</a></li>
+                    <li><a href="/friends/requests/add">Add Friend</a></li>
+                </ul>
+                <ul>
+
+                    <% for (let request of sentRequests) { %>
+                    <li>
+                        <a>
+                            <div>
+                                <img
+                                    src="/images/default_user_image.jpg"
+                                    alt="Profile Picture"
+                                    class="profile-picture"
+                                />
+                            </div>
+                            <div>                              
+                                <span class="chat-list-username">
+                                    <%= request.requestee.username %>
+                                </span>
+                            </div>
+                            <form action="/friends/requests/delete/<%= request._id %>" method="POST">
+                                <button type="submit">Cancel</button>
+                            </form>
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
+            </section>
+            <% } else if (urls.path === '/friends/requests/add'){%>
+            <section>
+                <ul>
+                    <li><a href="/friends">All Friends</a></li>
+                    <li><a href="/friends/requests">Friend Requests</a></li>
+                    <li><a href="/friends/sentRequests">Sent Requests</a></li>
+                    <li><a href="/friends/requests/add">Add Friend</a></li>
+                </ul>
+                <h1>Add friend</h1>
+                
+                <form action="/friends/sendFriendRequest" method="POST">
+                    <p>You can add friends with their ChatApp usernames.</p>
+                    <div class="form-group">
+                    <input type="text" placeholder="Username" name="requesteeUsername"/>
+                    <button type="submit" class="btn-default btn-color box-shadow">
+                        + Add Friend
+                    </button>
+                    <p><%= success %></p>
+                    <p><%= warning %></p>
+                    <p><%= error %></p>
+                </div>
+                </form>
+            </section>
+            <% } else { %>
+            <section id="chat-section">
+                <div>
+                    <div>
+                        <img
+                            src="/images/default_user_image.jpg"
+                            alt="Profile Picture"
+                            class="profile-picture"
+                        />
+                        <div>
+                            <span id="chat-receiver-username"
+                                ><%= chat.chatMates.join(', ') %></span
+                            >
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn-round">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button class="btn-round">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="chat-box">
+                    <div>
+                        <% for (let message of chat.messages) { %>
+                        <div class=<%= message.sender !== user.username ?
+                                'received-message-block': 'sent-message-block'%>>
+                            <% if (message.sender !== user.username) { %>
+                            <span class="sender-username"><%= message.sender %> </span>
+                            <% } %>
+                            <div>
+                                <% if (message.sender !== user.username) { %>
+                                <img 
+                                    src="/images/default_user_image.jpg"
+                                    alt="Profile Picture"
+                                    class="profile-picture"
+                                />
+                                <% } %> 
+                                <div class="chat-message-box">
+                                    <p><%= message.textContent %></p>
+                                </div>
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                            <span class="time-ellapsed"><%= message.timePassed  %> </span>
+                        </div>
+                        <% } %>
+                    </div>
+                    <div>
+                        <form action="" id="chat-form">
+                            <input
+                                type="text"
+                                placeholder="Type a message here"
+                            />
+                            <button class="btn-round btn-color">
+                                <i class="fas fa-location-arrow"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            <% } %>
+          
+            <section id="chat-options-section"></section>
         </main>
-        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <script
+            src="https://kit.fontawesome.com/a076d05399.js"
+            crossorigin="anonymous"
+        ></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/components.js"></script>
+        <script src="/js/ejs.min.js"></script>
+        <script src="/js/utils.js"></script>
+        <script src="/js/chat.js"></script>
     </body>
 </html>

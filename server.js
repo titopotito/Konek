@@ -51,8 +51,13 @@ function isLoggedIn(req, res, next) {
 
 app.get("/", isLoggedIn, async (req, res) => {
     const { _username } = req.session;
-    res.redirect("/chat");
-    // res.render("index", { username: _username });
+    const user = await User.findOne({ username: _username });
+    const chatList = await Chat.getChatList(user);
+    const urls = {
+        host: req.headers.host,
+        path: req.originalUrl,
+    };
+    res.render("index", { urls, chatList, user });
 });
 
 app.get("/r", isLoggedIn, async (req, res) => {
@@ -73,7 +78,7 @@ app.get("/r/:id", isLoggedIn, async (req, res) => {
     });
 });
 
-app.get("/chat", isLoggedIn, async (req, res) => {
+app.get("/friends", isLoggedIn, async (req, res) => {
     const { _username } = req.session;
     const user = await User.findOne({ username: _username });
     const chatList = await Chat.getChatList(user);
@@ -81,7 +86,102 @@ app.get("/chat", isLoggedIn, async (req, res) => {
         host: req.headers.host,
         path: req.originalUrl,
     };
-    res.render("chat", { urls, chatList, user });
+    res.render("index", { urls, chatList, user });
+});
+
+app.get("/friends/requests", isLoggedIn, async (req, res) => {
+    const { _username } = req.session;
+    const user = await User.findOne({ username: _username });
+    const chatList = await Chat.getChatList(user);
+    const urls = {
+        host: req.headers.host,
+        path: req.originalUrl,
+    };
+    const friendRequests = await FriendRequest.find({ requestee: user }).populate("requestor");
+
+    res.render("index", { urls, chatList, user, friendRequests });
+});
+
+app.get("/friends/sentRequests", isLoggedIn, async (req, res) => {
+    const { _username } = req.session;
+    const user = await User.findOne({ username: _username });
+    const chatList = await Chat.getChatList(user);
+    const urls = {
+        host: req.headers.host,
+        path: req.originalUrl,
+    };
+    const sentRequests = await FriendRequest.find({ requestor: user }).populate("requestee");
+    console.log(sentRequests);
+
+    res.render("index", { urls, chatList, user, sentRequests });
+});
+
+app.get("/friends/requests/add", isLoggedIn, async (req, res) => {
+    const { _username } = req.session;
+    const user = await User.findOne({ username: _username });
+    const chatList = await Chat.getChatList(user);
+    const urls = {
+        host: req.headers.host,
+        path: req.originalUrl,
+    };
+    res.render("index", { urls, chatList, user });
+});
+
+app.post("/friends/requests/add/:requestID", isLoggedIn, async (req, res) => {
+    const { requestID } = req.params;
+    const friendRequest = await FriendRequest.findById(requestID);
+    await User.updateOne(
+        { _id: friendRequest.requestee._id },
+        { $push: { friends: friendRequest.requestor } }
+    );
+
+    await User.updateOne(
+        { _id: friendRequest.requestor._id },
+        { $push: { friends: friendRequest.requestee } }
+    );
+
+    await FriendRequest.deleteOne({ _id: friendRequest._id });
+    return res.redirect("/friends/requests");
+});
+
+app.post("/friends/requests/delete/:requestID", isLoggedIn, async (req, res) => {
+    console.log("REQUEST ACCEPTED?");
+    const { requestID } = req.params;
+    const friendRequest = await FriendRequest.findById(requestID);
+    await FriendRequest.deleteOne({ _id: friendRequest._id });
+    return res.redirect("/friends/requests");
+});
+
+app.post("/friends/sendFriendRequest", isLoggedIn, async (req, res) => {
+    const { _username } = req.session;
+    const { requesteeUsername } = req.body;
+    const requestor = await User.findOne({ username: _username });
+    const requestee = await User.findOne({ username: requesteeUsername });
+
+    if (!requestee) {
+        req.flash("error", "User does not exist.");
+        return res.redirect("/");
+    }
+
+    const isFriends = requestor.friends.includes(requestee);
+    if (isFriends) {
+        req.flash("warning", "You are already friends with this user.");
+        return res.redirect("/");
+    }
+
+    const hasPendingFriendRequest = await FriendRequest.findOne({
+        requestor: requestor,
+        requestee: requestee,
+    });
+
+    if (hasPendingFriendRequest) {
+        req.flash("warning", "Already have pending friend request for this user.");
+        return res.redirect("/");
+    }
+
+    const savedFriendRequest = await FriendRequest.sendFriendRequest(requestor, requestee);
+    req.flash("success", "Friend request sent.");
+    return res.redirect("/");
 });
 
 app.get("/chat/new", isLoggedIn, async (req, res) => {
@@ -92,7 +192,7 @@ app.get("/chat/new", isLoggedIn, async (req, res) => {
         host: req.headers.host,
         path: req.originalUrl,
     };
-    res.render("chat", { urls, chatList, user });
+    res.render("index", { urls, chatList, user });
 });
 
 app.post("/chat/new", isLoggedIn, async (req, res) => {
@@ -120,38 +220,6 @@ app.post("/chat/new", isLoggedIn, async (req, res) => {
     res.json({ chatID });
 });
 
-app.post("/chat/sendFriendRequest", isLoggedIn, async (req, res) => {
-    const { _username } = req.session;
-    const { requesteeUsername } = req.body;
-    const requestor = await User.findOne({ username: _username });
-    const requestee = await User.findOne({ username: requesteeUsername });
-
-    if (!requestee) {
-        req.flash("error", "User does not exist.");
-        return res.redirect("/chat");
-    }
-
-    const isFriends = requestor.friends.includes(requestee);
-    if (isFriends) {
-        req.flash("warning", "You are already friends with this user.");
-        return res.redirect("/chat");
-    }
-
-    const hasPendingFriendRequest = await FriendRequest.findOne({
-        requestor: requestor,
-        requestee: requestee,
-    });
-
-    if (hasPendingFriendRequest) {
-        req.flash("warning", "Already have pending friend request for this user.");
-        return res.redirect("/chat");
-    }
-
-    const savedFriendRequest = await FriendRequest.sendFriendRequest(requestor, requestee);
-    req.flash("success", "Friend request sent.");
-    return res.redirect("/chat");
-});
-
 app.get("/chat/:chatID", isLoggedIn, async (req, res) => {
     const { _username } = req.session;
     const { chatID } = req.params;
@@ -162,7 +230,7 @@ app.get("/chat/:chatID", isLoggedIn, async (req, res) => {
         host: req.headers.host,
         path: req.originalUrl,
     };
-    res.render("chat", { urls, chatList, chat, user });
+    res.render("index", { urls, chatList, chat, user });
 });
 
 app.get("/login", (req, res) => {
@@ -175,7 +243,7 @@ app.post("/login", async (req, res) => {
     if (authObject) {
         req.session._username = authObject.username;
         req.session._id = authObject.id;
-        return res.redirect("/chat");
+        return res.redirect("/");
     }
     res.redirect("/login");
 });
