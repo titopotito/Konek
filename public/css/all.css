@@ -150,6 +150,18 @@ input:focus {
     background-color: rgb(89, 23, 197);
 }
 
+.error {
+    color: #ef5350;
+    font-size: small;
+    margin: 0.5rem;
+}
+
+.success {
+    color: #5cb85c;
+    font-size: small;
+    margin: 0.5rem;
+}
+
 /* NAVBAR */
 
 #navbar {

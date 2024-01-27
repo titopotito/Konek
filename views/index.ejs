@@ -19,9 +19,12 @@
             <button type="submit" class="btn-default btn-color box-shadow">
                 + Add Friend
             </button>
-            <p><%= success %></p>
-            <p><%= warning %></p>
-            <p><%= error %></p>
+            <% if (success.length > 0)  { %>
+                <p class="success"><%= success %></p>
+            <% } %>
+            <% if (error .length > 0)  { %>
+                <p class="error"><%= error %></p>
+            <% } %>
         </div>
         </form>
     </section>

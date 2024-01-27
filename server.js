@@ -27,7 +27,6 @@ app.use(flash());
 
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
-    res.locals.warning = req.flash("warning");
     res.locals.error = req.flash("error");
     next();
 });
@@ -140,20 +139,21 @@ app.post("/friends/requests/delete/:requestID", isLoggedIn, async (req, res) => 
     return res.redirect("/friends/requests");
 });
 
-app.post("/friends/sendFriendRequest", isLoggedIn, async (req, res) => {
+app.post("/friends/sendFriendRequest", isLoggedIn, initData, async (req, res) => {
     const { _username } = req.session;
     const { requesteeUsername } = req.body;
     const requestor = await User.findOne({ username: _username });
     const requestee = await User.findOne({ username: requesteeUsername });
+    const redirectPath = req.headers.referer.slice(21);
     if (!requestee) {
         req.flash("error", "User does not exist.");
-        return res.redirect("/");
+        return res.redirect(redirectPath);
     }
 
-    const isFriends = requestor.friends.includes(requestee);
+    const isFriends = requestor.friends.includes(requestee._id);
     if (isFriends) {
-        req.flash("warning", "You are already friends with this user.");
-        return res.redirect("/");
+        req.flash("error", "You are already friends with this user.");
+        return res.redirect(redirectPath);
     }
 
     const hasPendingFriendRequest = await FriendRequest.findOne({
@@ -161,14 +161,13 @@ app.post("/friends/sendFriendRequest", isLoggedIn, async (req, res) => {
         requestee: requestee,
     });
     if (hasPendingFriendRequest) {
-        req.flash("warning", "Already have pending friend request for this user.");
-        return res.redirect("/");
+        req.flash("error", "Already have pending friend request for this user.");
+        return res.redirect(redirectPath);
     }
 
     await FriendRequest.sendFriendRequest(requestor, requestee);
     req.flash("success", "Friend request sent.");
-
-    return res.redirect("/");
+    return res.redirect(redirectPath);
 });
 
 app.get("/chat/new", isLoggedIn, initData, async (req, res) => {
