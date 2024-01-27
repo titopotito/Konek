@@ -1,0 +1,73 @@
+#requests-section {
+    display: grid;
+    width: 55%;
+    grid-template-columns: 1fr 3fr;
+    background-color: #393e46;
+    box-shadow: 1px 4px 4px black;
+}
+
+#requests-list {
+    padding-top: 2em;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-rows: minmax(220px, 220px);
+    overflow-y: auto;
+}
+
+#requests-list li {
+    overflow: hidden;
+    padding: 0.5em;
+}
+
+#requests-list figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    gap: 0.5em;
+}
+
+#requests-list figure img {
+    width: 70%;
+    height: auto;
+}
+
+#requests-list figcaption {
+    display: flex;
+    justify-content: center;
+    width: 90%;
+}
+
+#requests-list figure a {
+    font-size: 1em;
+    font-weight: 600;
+    color: #eee;
+    text-align: center;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#requests-list li > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 1em 0.5em;
+}
+
+#requests-list li > div:hover {
+    background-color: #eeeeeec5;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#requests-list li > div > div {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#requests-list li .btn-default {
+    padding: 0.5em;
+    font-size: 0.75em;
+}

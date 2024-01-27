@@ -66,6 +66,11 @@ app.get("/", isLoggedIn, initData, async (req, res) => {
     res.render("index", { ...req.contextData });
 });
 
+// ROOM ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// ROOM ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// ROOM ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// ROOM ROUTE /////////////////////////////////////////////////////////////////////////////////////
+
 app.get("/r", isLoggedIn, async (req, res) => {
     req.session.isMovieHost = true;
     res.redirect(`r/${uuid()}`);
@@ -84,6 +89,11 @@ app.get("/r/:id", isLoggedIn, async (req, res) => {
     });
 });
 
+// FRIENDS ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// FRIENDS ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// FRIENDS ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// FRIENDS ROUTE /////////////////////////////////////////////////////////////////////////////////////
+
 app.get("/friends", isLoggedIn, initData, async (req, res) => {
     res.render("friends/", { ...req.contextData });
 });
@@ -99,7 +109,7 @@ app.get("/friends/sentRequests", isLoggedIn, initData, async (req, res) => {
     const sentRequests = await FriendRequest.find({ requestor: req.contextData.user }).populate(
         "requestee"
     );
-    res.render("friends/sentrequests", { ...req.contextData, sentRequests });
+    res.render("friends/sentRequests", { ...req.contextData, sentRequests });
 });
 
 app.get("/friends/requests/add", isLoggedIn, initData, async (req, res) => {
@@ -124,7 +134,6 @@ app.post("/friends/requests/add/:requestID", isLoggedIn, async (req, res) => {
 });
 
 app.post("/friends/requests/delete/:requestID", isLoggedIn, async (req, res) => {
-    console.log("REQUEST ACCEPTED?");
     const { requestID } = req.params;
     const friendRequest = await FriendRequest.findById(requestID);
     await FriendRequest.deleteOne({ _id: friendRequest._id });
@@ -136,7 +145,6 @@ app.post("/friends/sendFriendRequest", isLoggedIn, async (req, res) => {
     const { requesteeUsername } = req.body;
     const requestor = await User.findOne({ username: _username });
     const requestee = await User.findOne({ username: requesteeUsername });
-
     if (!requestee) {
         req.flash("error", "User does not exist.");
         return res.redirect("/");
@@ -152,20 +160,25 @@ app.post("/friends/sendFriendRequest", isLoggedIn, async (req, res) => {
         requestor: requestor,
         requestee: requestee,
     });
-
     if (hasPendingFriendRequest) {
         req.flash("warning", "Already have pending friend request for this user.");
         return res.redirect("/");
     }
 
-    const savedFriendRequest = await FriendRequest.sendFriendRequest(requestor, requestee);
+    await FriendRequest.sendFriendRequest(requestor, requestee);
     req.flash("success", "Friend request sent.");
+
     return res.redirect("/");
 });
 
 app.get("/chat/new", isLoggedIn, initData, async (req, res) => {
     res.render("chat/new", { ...req.contextData });
 });
+
+// CHAT ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// CHAT ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// CHAT ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// CHAT ROUTE /////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/chat/new", isLoggedIn, async (req, res) => {
     const { _username } = req.session;
@@ -202,6 +215,11 @@ app.get("/login", (req, res) => {
     return req.session._username ? res.redirect("/") : res.render("login");
 });
 
+// LOGIN LOGOUT ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// LOGIN LOGOUT ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// LOGIN LOGOUT ROUTE /////////////////////////////////////////////////////////////////////////////////////
+// LOGIN LOGOUT ROUTE /////////////////////////////////////////////////////////////////////////////////////
+
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
     const authObject = await User.isAuthenticated(username, password);
@@ -226,6 +244,11 @@ app.get("/_get-client-username", (req, res) => {
 httpServer.listen(8000, (req, res) => {
     console.log("Server is listening at port 8000");
 });
+
+// SOCKETS /////////////////////////////////////////////////////////////////////////////////////
+// SOCKETS /////////////////////////////////////////////////////////////////////////////////////
+// SOCKETS /////////////////////////////////////////////////////////////////////////////////////
+// SOCKETS /////////////////////////////////////////////////////////////////////////////////////
 
 io.on("connection", (socket) => {
     console.log(`Socket ${socket.id} has connected...`);

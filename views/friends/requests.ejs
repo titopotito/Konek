@@ -1,34 +1,34 @@
 <%- include('../partials/header', {user: user}) %> 
 <main> 
     <%- include('../partials/sidebar', {chatList: chatList}) %> 
-    <section>
+     <section id="requests-section">
         <%- include('navigation') %>
-        <ul>
+        <ul id="requests-list">
             <% for (let request of friendRequests) { %>
             <li>
-                <a>
-                    <div>
-                        <img
+                <div>
+                    <figure>
+                        <img 
                             src="/images/default_user_image.jpg"
                             alt="Profile Picture"
                             class="profile-picture"
                         />
+                        <figcaption class="username"><a href=""><%= request.requestor.username %></a></figcaption>    
+                    </figure>
+                    <div>
+                        <form action="/friends/requests/add/<%= request._id %>" method="POST">
+                                <button type="submit" class="btn-default btn-color">Accept</button>
+                            </form>
+                        <form action="/friends/requests/delete/<%= request._id %>" method="POST">
+                                <button type="submit" class="btn-default btn-color">Delete</button>
+                        </form>
                     </div>
-                    <div>                              
-                        <span class="chat-list-username">
-                            <%= request.requestor.username %>
-                        </span>
-                    </div>
-                    <form action="/friends/requests/add/<%= request._id %>" method="POST">
-                        <button type="submit">Accept</button>
-                    </form>
-                    <form action="/friends/requests/delete/<%= request._id %>" method="POST">
-                        <button type="submit">Delete</button>
-                    </form>
-                </a>
+                </div>
+                
             </li>
             <% } %>
         </ul>
     </section>
 </main>
+ 
 <%- include('../partials/header', {user: user}) %> 

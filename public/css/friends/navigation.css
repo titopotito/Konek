@@ -1,0 +1,19 @@
+nav {
+    padding: 1em;
+    padding-top: 0;
+    border-right: 1px solid #787a91;
+    margin: 4em 0;
+}
+
+nav a {
+    color: #eeeeeec5;
+    font-size: small;
+    font-weight: 600;
+    padding: 0.75em;
+    display: block;
+    border-radius: 0.25em;
+}
+
+nav a:hover {
+    background-color: #787a91;
+}

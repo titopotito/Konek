@@ -1,21 +1,21 @@
 <%- include('../partials/header', {user: user}) %> 
 <main> 
     <%- include('../partials/sidebar', {chatList: chatList}) %> 
-    <section>
-       <%- include('navigation') %>
-        <h1>Add friend</h1>
-        <form action="/friends/sendFriendRequest" method="POST">
+    <section id="add-friend-section">
+        <%- include('navigation') %>
+        <section>
+            <h1>Add friend</h1>
             <p>You can add friends with their ChatApp usernames.</p>
-            <div class="form-group">
-            <input type="text" placeholder="Username" name="requesteeUsername"/>
-            <button type="submit" class="btn-default btn-color box-shadow">
-                + Add Friend
-            </button>
+            <form action="/friends/sendFriendRequest" method="POST">
+                <input type="text" placeholder="Username" name="requesteeUsername"/>
+                <button type="submit" class="btn-default btn-color box-shadow">
+                    + Add
+                </button>
+            </form>
             <p><%= success %></p>
             <p><%= warning %></p>
             <p><%= error %></p>
-        </div>
-        </form>
+        </section>
     </section>
 </main>
 <%- include('../partials/footer') %> 

@@ -188,9 +188,6 @@ h1 {
     color: #eee;
 }
 
-#chat-options-section {
-    width: 25%;
-}
 .received-message-block {
     width: 100%;
     padding: 0.75em 1em 0.75em 0;

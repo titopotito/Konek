@@ -1,28 +1,23 @@
 <%- include('../partials/header', {user: user}) %> 
 <main> 
     <%- include('../partials/sidebar', {chatList: chatList}) %> 
-    <section>
+    <section id="all-friends-section">
         <%- include('navigation') %>
-        <ul>
+        <ul id="friend-list">
             <% for (let friend of user.friends) { %>
             <li>
-                <a>
-                    <div>
-                        <img
-                            src="/images/default_user_image.jpg"
-                            alt="Profile Picture"
-                            class="profile-picture"
-                        />
-                    </div>
-                    <div>                              
-                        <span class="chat-list-username">
-                            <%= friend.username %>
-                        </span>
-                    </div>
-                </a>
+                <figure>
+                    <img 
+                        src="/images/default_user_image.jpg"
+                        alt="Profile Picture"
+                        class="profile-picture"
+                    />
+                    <figcaption class="username"><a href="">Eli<%= friend.username %></a></figcaption>
+                </figure>
             </li>
             <% } %>
         </ul>
     </section>
+    <section id="right-sidebar-section"></section>
 </main>
 <%- include('../partials/footer') %> 
